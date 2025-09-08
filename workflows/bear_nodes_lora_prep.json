@@ -1,0 +1,43 @@
+{
+  "version": 0.1,
+  "last_node_id": 24,
+  "last_link_id": 30,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "Load Images From Folder (KJ)",
+      "pos": [40, 80],
+      "widgets_values": ["REPLACE/with/your/input_folder", "*.jpg;*.jpeg;*.png", true, false]
+    },
+    {
+      "id": 2,
+      "type": "Image Crop Face",
+      "pos": [320, 80],
+      "widgets_values": [1.4, true]
+    },
+    {
+      "id": 3,
+      "type": "Image Resize",
+      "pos": [560, 80],
+      "widgets_values": [1024, 1024, "lanczos"]
+    },
+    {
+      "id": 4,
+      "type": "SaveImage",
+      "pos": [760, 80],
+      "widgets_values": ["dataset_1024"]
+    },
+    {
+      "id": 5,
+      "type": "PreviewImage",
+      "pos": [560, 200]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "IMAGE"],
+    [2, 2, 0, 3, 0, "IMAGE"],
+    [3, 3, 0, 4, 0, "IMAGE"],
+    [4, 3, 0, 5, 0, "IMAGE"]
+  ],
+  "groups": []
+}
