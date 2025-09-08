@@ -1,0 +1,39 @@
+# ComfyUI BearCave
+
+Opinionated custom nodes and ready-to-use workflows for dataset prep and portrait/headshot pipelines in **ComfyUI**.
+
+- **Repo:** https://github.com/78Ventures/ComfyUI-BearCave
+- **Status:** Alpha — APIs may change
+- **License:** MIT (see [LICENSE](LICENSE))
+
+---
+
+## Features
+
+- **One-click dataset prep** workflows for LoRA training:
+  - Folder picker → batch image loader
+  - Face-aware crop to square → 1024×1024 resize
+  - Filename-preserving save (suffix support)
+- **Composable graph pieces** designed to be small, readable, and easy to slot into existing pipelines.
+
+> This pack ships **workflows** and lightweight glue. It does not include model weights.
+
+---
+
+## Requirements
+
+- **ComfyUI** (latest)
+- Recommended custom node packs (install via ComfyUI-Manager or git):
+  - **WAS Node Suite** — face crop: `WASasquatch/was-node-suite-comfyui`
+  - **IF-AI Tools** — batch image loader: `if-ai/ComfyUI-IF_AI_tools`
+  - **FileBrowserAPI** — clickable folder picker: `GalactusX31/ComfyUI-FileBrowserAPI`
+
+> You can substitute other loaders/pickers if you prefer; workflows are easy to edit.
+
+---
+
+## Installation
+
+### Option A — ComfyUI-Manager (recommended)
+1. Open **ComfyUI → Manager → Install via URL**.
+2. Paste this repo URL:

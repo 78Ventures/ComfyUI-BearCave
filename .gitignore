@@ -1,0 +1,67 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+.eggs/
+.build/
+dist/
+build/
+pip-wheel-metadata/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.pyenv/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Node/Yarn (if you add a small UI or docs site later)
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# ComfyUI / Large assets (do NOT commit model weights)
+models/
+**/models/
+**/checkpoints/
+**/loras/
+**/vae/
+**/clip/
+**/controlnet/
+**/embeddings/
+**/upscale_models/
+**/ipadapter/
+**/temp/
+**/cache/
+
+# Generated outputs/previews
+output/
+outputs/
+previews/
+*.tmp
+
+# OS/metadata
+*.log
+*.lock
