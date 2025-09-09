@@ -8,7 +8,6 @@ import torch
 from PIL import Image
 
 class BC_IMAGE_LORA_CONFORM:
-class BC_IMAGE_LORA_CONFORM:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -64,7 +63,7 @@ class BC_IMAGE_LORA_CONFORM:
     )
     
     FUNCTION = "crop_and_resize"
-    CATEGORY = "🐻 Bear Cave/Image"
+    CATEGORY = "🐻 Bear Cave/LoRa"
 
     def crop_and_resize(self, image, size, resize_method, crop_method, **kwargs):
         import json

@@ -47,40 +47,38 @@ deps_ok = check_and_install_dependencies()
 
 # Try to import each module individually to avoid total failure
 try:
-    from .bear_nodes_batch import NODE_CLASS_MAPPINGS as BATCH_NODES, NODE_DISPLAY_NAME_MAPPINGS as BATCH_DISPLAY
-    NODE_CLASS_MAPPINGS.update(BATCH_NODES)
-    NODE_DISPLAY_NAME_MAPPINGS.update(BATCH_DISPLAY)
-    print("🐻 Bear Cave: Batch nodes loaded successfully")
+    from .bc_face_detection import NODE_CLASS_MAPPINGS as FACE_NODES, NODE_DISPLAY_NAME_MAPPINGS as FACE_DISPLAY
+    NODE_CLASS_MAPPINGS.update(FACE_NODES)
+    NODE_DISPLAY_NAME_MAPPINGS.update(FACE_DISPLAY)
+    print("🐻 Bear Cave: Face detection nodes loaded successfully")
 except Exception as e:
-    print(f"🐻 Bear Cave: Failed to load batch nodes: {e}")
+    print(f"🐻 Bear Cave: Failed to load face detection nodes: {e}")
 
 try:
-    from .bear_nodes_image import NODE_CLASS_MAPPINGS as IMAGE_NODES, NODE_DISPLAY_NAME_MAPPINGS as IMAGE_DISPLAY
-    NODE_CLASS_MAPPINGS.update(IMAGE_NODES)
-    NODE_DISPLAY_NAME_MAPPINGS.update(IMAGE_DISPLAY)
-    print("🐻 Bear Cave: Image nodes loaded successfully")
+    from .bc_metadata import NODE_CLASS_MAPPINGS as META_NODES, NODE_DISPLAY_NAME_MAPPINGS as META_DISPLAY
+    NODE_CLASS_MAPPINGS.update(META_NODES)
+    NODE_DISPLAY_NAME_MAPPINGS.update(META_DISPLAY)
+    print("🐻 Bear Cave: Metadata nodes loaded successfully")
 except Exception as e:
-    print(f"🐻 Bear Cave: Failed to load image nodes: {e}")
+    print(f"🐻 Bear Cave: Failed to load metadata nodes: {e}")
 
 try:
-    from .bear_nodes_exif import NODE_CLASS_MAPPINGS as EXIF_NODES, NODE_DISPLAY_NAME_MAPPINGS as EXIF_DISPLAY
-    NODE_CLASS_MAPPINGS.update(EXIF_NODES)
-    NODE_DISPLAY_NAME_MAPPINGS.update(EXIF_DISPLAY)
-    print("🐻 Bear Cave: EXIF nodes loaded successfully")
+    from .bc_fileman import NODE_CLASS_MAPPINGS as FILEMAN_NODES, NODE_DISPLAY_NAME_MAPPINGS as FILEMAN_DISPLAY
+    NODE_CLASS_MAPPINGS.update(FILEMAN_NODES)
+    NODE_DISPLAY_NAME_MAPPINGS.update(FILEMAN_DISPLAY)
+    print("🐻 Bear Cave: File manager nodes loaded successfully")
 except Exception as e:
-    print(f"🐻 Bear Cave: Failed to load EXIF nodes: {e}")
+    print(f"🐻 Bear Cave: Failed to load file manager nodes: {e}")
 
-# Detection nodes load last (since they need MediaPipe)
-if deps_ok:
-    try:
-        from .bear_nodes_detection import NODE_CLASS_MAPPINGS as DETECTION_NODES, NODE_DISPLAY_NAME_MAPPINGS as DETECTION_DISPLAY
-        NODE_CLASS_MAPPINGS.update(DETECTION_NODES)
-        NODE_DISPLAY_NAME_MAPPINGS.update(DETECTION_DISPLAY)
-        print("🐻 Bear Cave: Detection nodes loaded successfully")
-    except Exception as e:
-        print(f"🐻 Bear Cave: Failed to load detection nodes: {e}")
-else:
-    print("🐻 Bear Cave: Skipping detection nodes due to missing dependencies")
+# Load LoRa-specific nodes
+try:
+    from .bc_lora import NODE_CLASS_MAPPINGS as LORA_NODES, NODE_DISPLAY_NAME_MAPPINGS as LORA_DISPLAY
+    NODE_CLASS_MAPPINGS.update(LORA_NODES)
+    NODE_DISPLAY_NAME_MAPPINGS.update(LORA_DISPLAY)
+    print("🐻 Bear Cave: LoRa nodes loaded successfully")
+except Exception as e:
+    print(f"🐻 Bear Cave: Failed to load LoRa nodes: {e}")
+
 
 total_nodes = len(NODE_CLASS_MAPPINGS)
 print(f"🐻 Bear Cave: Total nodes loaded: {total_nodes}")

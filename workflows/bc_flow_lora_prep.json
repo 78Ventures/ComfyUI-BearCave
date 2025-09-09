@@ -5,39 +5,51 @@
   "nodes": [
     {
       "id": 1,
-      "type": "Load Images From Folder (KJ)",
+      "type": "BC_LOAD_IMAGES",
       "pos": [40, 80],
-      "widgets_values": ["REPLACE/with/your/input_folder", "*.jpg;*.jpeg;*.png", true, false]
+      "widgets_values": ["REPLACE/with/your/input_folder", "", 0, 10, "1000", false, 0, true, "numerical", "none", "alpha"]
     },
     {
       "id": 2,
-      "type": "Image Crop Face",
+      "type": "BC_DETECT_FACE_ORIENTATION",
       "pos": [320, 80],
-      "widgets_values": [1.4, true]
+      "widgets_values": [1.4, 0.5, true]
     },
     {
       "id": 3,
-      "type": "Image Resize",
+      "type": "BC_IMAGE_LORA_CONFORM",
       "pos": [560, 80],
-      "widgets_values": [1024, 1024, "lanczos"]
+      "widgets_values": [1024, 1024, "face_center"]
     },
     {
       "id": 4,
-      "type": "SaveImage",
+      "type": "BC_EXIF_WRITER",
       "pos": [760, 80],
-      "widgets_values": ["dataset_1024"]
+      "widgets_values": ["", true]
     },
     {
       "id": 5,
+      "type": "BC_SAVE_IMAGES",
+      "pos": [960, 80],
+      "widgets_values": ["dataset_1024", "image", "", "png", 100, "numerical"]
+    },
+    {
+      "id": 6,
       "type": "PreviewImage",
-      "pos": [560, 200]
+      "pos": [760, 200]
     }
   ],
   "links": [
     [1, 1, 0, 2, 0, "IMAGE"],
     [2, 2, 0, 3, 0, "IMAGE"],
-    [3, 3, 0, 4, 0, "IMAGE"],
-    [4, 3, 0, 5, 0, "IMAGE"]
+    [3, 2, 1, 3, 3, "face_center_x"],
+    [4, 2, 2, 3, 4, "face_center_y"],
+    [5, 2, 3, 3, 5, "face_width"],
+    [6, 2, 4, 3, 6, "face_height"],
+    [7, 3, 0, 4, 0, "IMAGE"],
+    [8, 3, 1, 4, 1, "METADATA"],
+    [5, 4, 0, 5, 0, "IMAGE"],
+    [6, 4, 0, 6, 0, "IMAGE"]
   ],
   "groups": []
 }
