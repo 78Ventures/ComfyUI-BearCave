@@ -1,5 +1,5 @@
 {
-  "version": 0.2,
+  "version": 0.4,
   "last_node_id": 6,
   "last_link_id": 12,
   "nodes": [
@@ -186,5 +186,4 @@
       "offset": [0, 0]
     }
   },
-  "version": 0.4
 }
