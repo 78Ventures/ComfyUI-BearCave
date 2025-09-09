@@ -55,8 +55,9 @@ except ImportError:
     shutil = None
     SHUTIL_AVAILABLE = False
 
-# Check if we have minimum requirements
-DEPENDENCIES_OK = TORCH_AVAILABLE and NUMPY_AVAILABLE and PIL_AVAILABLE and FOLDER_PATHS_AVAILABLE
+# Check if we have minimum requirements  
+# Note: folder_paths might not be available during initial import, so we'll check it later
+DEPENDENCIES_OK = TORCH_AVAILABLE and NUMPY_AVAILABLE and PIL_AVAILABLE
 
 # UTILITIES
 ###################################
@@ -74,18 +75,24 @@ if DEPENDENCIES_OK:
     # Wrapper node for IF_Load_Images_Node.py from Impact Frames
     ###################################
     try:
-        from nodes.bc_fileman.IF_Load_Images_Node import IFLoadImagess
+        from .IF_Load_Images_Node import IFLoadImagess
         _delegate_class = IFLoadImagess
-    except ImportError:
+        print("🐻 Bear Cave: Successfully imported IFLoadImagess from IF_Load_Images_Node")
+    except ImportError as e:
+        print(f"🐻 Bear Cave: Failed to import IFLoadImagess: {e}")
         # Fallback: try common variations in case upstream changes
         try:
-            from nodes.bc_fileman.IF_Load_Images_Node import IF_LoadImagess
+            from .IF_Load_Images_Node import IF_LoadImagess
             _delegate_class = IF_LoadImagess
-        except ImportError:
+            print("🐻 Bear Cave: Successfully imported IF_LoadImagess as fallback")
+        except ImportError as e2:
+            print(f"🐻 Bear Cave: Failed to import IF_LoadImagess: {e2}")
             try:
-                from nodes.bc_fileman.IF_Load_Images_Node import IFLoadImages
+                from .IF_Load_Images_Node import IFLoadImages
                 _delegate_class = IFLoadImages
-            except ImportError:
+                print("🐻 Bear Cave: Successfully imported IFLoadImages as fallback")
+            except ImportError as e3:
+                print(f"🐻 Bear Cave: Failed to import IFLoadImages: {e3}")
                 # Create a stub class if all imports fail
                 class _StubLoadImages:
                     @classmethod
@@ -102,6 +109,7 @@ if DEPENDENCIES_OK:
                     def error(self, *args, **kwargs):
                         return ("IF_Load_Images_Node class not found. Please check the import.",)
                 _delegate_class = _StubLoadImages
+                print("🐻 Bear Cave: Using stub class for BC_LOAD_IMAGES due to import failures")
 
     class BC_LOAD_IMAGES:
         def __init__(self):
@@ -131,7 +139,31 @@ if DEPENDENCIES_OK:
     ###################################
     # Comprehensive batch image saver with extensive connection points
     ###################################
-    from nodes.bc_fileman.IF_Load_Images_Node import ImageManager
+    try:
+        from .IF_Load_Images_Node import ImageManager
+        print("🐻 Bear Cave: Successfully imported ImageManager from IF_Load_Images_Node")
+    except ImportError as e:
+        print(f"🐻 Bear Cave: Failed to import ImageManager: {e}")
+        # Create a minimal ImageManager stub
+        class ImageManager:
+            @staticmethod
+            def normalize_path(path):
+                return os.path.normpath(path)
+            @staticmethod
+            def sanitize_path_component(component):
+                import re
+                return re.sub(r'[\\/:*?"<>|]', '_', component).strip()
+            @staticmethod
+            def sort_files(files, sort_method):
+                if sort_method == "numerical":
+                    return sorted(files, key=lambda x: [int(text) if text.isdigit() else text for text in re.split(r'(\d+)', os.path.basename(x))])
+                elif sort_method == "date_created":
+                    return sorted(files, key=os.path.getctime)
+                elif sort_method == "date_modified":
+                    return sorted(files, key=os.path.getmtime)
+                else:  # alphabetical
+                    return sorted(files)
+        print("🐻 Bear Cave: Using minimal ImageManager stub")
 
     class BC_SAVE_IMAGES:
         def __init__(self):
@@ -161,6 +193,13 @@ if DEPENDENCIES_OK:
             saved_paths = []
             
             try:
+                # Runtime check for folder_paths availability
+                if not FOLDER_PATHS_AVAILABLE:
+                    try:
+                        import folder_paths
+                    except ImportError:
+                        return (["Error: folder_paths module not available in ComfyUI environment"],)
+                
                 # Use ImageManager to normalize and validate the output path
                 output_path = ImageManager.normalize_path(output_path)
                 if not os.path.isabs(output_path):
