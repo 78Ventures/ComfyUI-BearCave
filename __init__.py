@@ -1,0 +1,18 @@
+###################################
+# __init__.py
+###################################
+# BearCave root package entry point for ComfyUI.
+#
+# This file re-exports NODE_CLASS_MAPPINGS and NODE_DISPLAY_NAME_MAPPINGS
+# from our subpackage so ComfyUI can register the nodes.
+###################################
+
+from .nodes import (
+    NODE_CLASS_MAPPINGS as _BC_NODE_CLASS_MAPPINGS,
+    NODE_DISPLAY_NAME_MAPPINGS as _BC_NODE_DISPLAY_NAME_MAPPINGS,
+)
+
+NODE_CLASS_MAPPINGS = dict(_BC_NODE_CLASS_MAPPINGS)
+NODE_DISPLAY_NAME_MAPPINGS = dict(_BC_NODE_DISPLAY_NAME_MAPPINGS)
+
+print(f"✅ BearCave: registered {len(NODE_CLASS_MAPPINGS)} nodes.")
