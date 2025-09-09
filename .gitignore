@@ -62,6 +62,9 @@ outputs/
 previews/
 *.tmp
 
+# Development/debugging
+dev/
+
 # OS/metadata
 *.log
 *.lock
