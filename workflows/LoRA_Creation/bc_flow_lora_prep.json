@@ -1,0 +1,190 @@
+{
+  "version": 0.2,
+  "last_node_id": 6,
+  "last_link_id": 12,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "BC_LOAD_IMAGES",
+      "pos": [40, 80],
+      "size": {"0": 315, "1": 314},
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {"name": "images", "type": "IMAGE", "links": [1], "shape": 3, "slot_index": 0},
+        {"name": "masks", "type": "MASK", "links": null, "shape": 3},
+        {"name": "image_paths", "type": "STRING", "links": null, "shape": 3},
+        {"name": "filenames", "type": "STRING", "links": null, "shape": 3},
+        {"name": "count_str", "type": "STRING", "links": null, "shape": 3},
+        {"name": "count_int", "type": "INT", "links": null, "shape": 3},
+        {"name": "images_batch", "type": "IMAGE", "links": null},
+        {"name": "masks_batch", "type": "MASK", "links": null}
+      ],
+      "properties": {"Node name for S&R": "BC_LOAD_IMAGES"},
+      "widgets_values": [
+        "REPLACE/with/your/01_source_folder", 
+        "", 
+        0, 
+        10, 
+        "1000", 
+        false, 
+        0, 
+        true, 
+        "numerical", 
+        "none", 
+        "alpha"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "BC_DETECT_FACE_ORIENTATION",
+      "pos": [400, 80],
+      "size": {"0": 315, "1": 126},
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 1}
+      ],
+      "outputs": [
+        {"name": "image", "type": "IMAGE", "links": [2], "shape": 3, "slot_index": 0},
+        {"name": "face_center_x", "type": "FLOAT", "links": [3], "shape": 3, "slot_index": 1},
+        {"name": "face_center_y", "type": "FLOAT", "links": [4], "shape": 3, "slot_index": 2},
+        {"name": "face_width", "type": "FLOAT", "links": [5], "shape": 3, "slot_index": 3},
+        {"name": "face_height", "type": "FLOAT", "links": [6], "shape": 3, "slot_index": 4}
+      ],
+      "properties": {"Node name for S&R": "BC_DETECT_FACE_ORIENTATION"},
+      "widgets_values": [1.4, 0.5, true]
+    },
+    {
+      "id": 3,
+      "type": "BC_IMAGE_LORA_CONFORM",
+      "pos": [760, 80],
+      "size": {"0": 315, "1": 334},
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 2},
+        {"name": "face_center_x", "type": "FLOAT", "link": 3},
+        {"name": "face_center_y", "type": "FLOAT", "link": 4},
+        {"name": "face_width", "type": "FLOAT", "link": 5},
+        {"name": "face_height", "type": "FLOAT", "link": 6}
+      ],
+      "outputs": [
+        {"name": "image", "type": "IMAGE", "links": [7, 8], "shape": 3, "slot_index": 0},
+        {"name": "filename", "type": "STRING", "links": [9], "shape": 3, "slot_index": 1},
+        {"name": "relative_path", "type": "STRING", "links": [10], "shape": 3, "slot_index": 2},
+        {"name": "width", "type": "INT", "links": null, "shape": 3},
+        {"name": "height", "type": "INT", "links": null, "shape": 3},
+        {"name": "scale_factor", "type": "FLOAT", "links": null, "shape": 3},
+        {"name": "method_used", "type": "STRING", "links": null, "shape": 3},
+        {"name": "was_upscaled", "type": "BOOLEAN", "links": null, "shape": 3},
+        {"name": "was_cropped", "type": "BOOLEAN", "links": null, "shape": 3},
+        {"name": "crop_info", "type": "STRING", "links": null, "shape": 3},
+        {"name": "process_log", "type": "STRING", "links": null, "shape": 3}
+      ],
+      "properties": {"Node name for S&R": "BC_IMAGE_LORA_CONFORM"},
+      "widgets_values": [1024, "LANCZOS", "face_center", false, "black", 1.5, true]
+    },
+    {
+      "id": 4,
+      "type": "BC_EXIF_WRITER",
+      "pos": [1120, 80],
+      "size": {"0": 315, "1": 334},
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 7},
+        {"name": "filename", "type": "STRING", "link": 9},
+        {"name": "relative_path", "type": "STRING", "link": 10}
+      ],
+      "outputs": [
+        {"name": "file_path", "type": "STRING", "links": null, "shape": 3},
+        {"name": "filename", "type": "STRING", "links": null, "shape": 3},
+        {"name": "metadata_json", "type": "STRING", "links": null, "shape": 3},
+        {"name": "tags", "type": "STRING", "links": null, "shape": 3},
+        {"name": "full_metadata", "type": "STRING", "links": null, "shape": 3},
+        {"name": "save_successful", "type": "BOOLEAN", "links": null, "shape": 3},
+        {"name": "file_size", "type": "INT", "links": null, "shape": 3},
+        {"name": "save_timestamp", "type": "STRING", "links": null, "shape": 3}
+      ],
+      "properties": {"Node name for S&R": "BC_EXIF_WRITER"},
+      "widgets_values": [
+        "neutral", 
+        "center", 
+        "processed_for_lora", 
+        "subject", 
+        "REPLACE/with/your/02_conform_folder"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "BC_SAVE_IMAGES",
+      "pos": [1480, 80],
+      "size": {"0": 315, "1": 270},
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 8}
+      ],
+      "outputs": [
+        {"name": "saved_path", "type": "STRING", "links": null, "shape": 3}
+      ],
+      "properties": {"Node name for S&R": "BC_SAVE_IMAGES"},
+      "widgets_values": [
+        "REPLACE/with/your/02_conform_folder", 
+        "conformed", 
+        "", 
+        "png", 
+        100, 
+        "numerical"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "PreviewImage",
+      "pos": [1120, 450],
+      "size": {"0": 315, "1": 246},
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {"name": "images", "type": "IMAGE", "link": 11}
+      ],
+      "properties": {"Node name for S&R": "PreviewImage"}
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "IMAGE"],
+    [2, 2, 0, 3, 0, "IMAGE"],
+    [3, 2, 1, 3, 4, "FLOAT"],
+    [4, 2, 2, 3, 5, "FLOAT"],
+    [5, 2, 3, 3, 6, "FLOAT"],
+    [6, 2, 4, 3, 7, "FLOAT"],
+    [7, 3, 0, 4, 0, "IMAGE"],
+    [8, 3, 0, 5, 0, "IMAGE"],
+    [9, 3, 1, 4, 1, "STRING"],
+    [10, 3, 2, 4, 2, "STRING"],
+    [11, 3, 0, 6, 0, "IMAGE"]
+  ],
+  "groups": [
+    {
+      "title": "LoRa Preparation Workflow",
+      "bounding": [20, 20, 1800, 750],
+      "color": "#3f789e",
+      "font_size": 24
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8,
+      "offset": [0, 0]
+    }
+  },
+  "version": 0.4
+}
