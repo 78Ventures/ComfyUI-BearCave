@@ -37,25 +37,56 @@ def numerical_sort_key(path):
 ###################################
 # Wrapper node for IF_Load_Images_Node.py from Impact Frames
 ###################################
-from nodes.bc_fileman.IF_Load_Images_Node import IFLoadImagess
+try:
+    from nodes.bc_fileman.IF_Load_Images_Node import IFLoadImagess
+    _delegate_class = IFLoadImagess
+except ImportError:
+    # Fallback: try common variations in case upstream changes
+    try:
+        from nodes.bc_fileman.IF_Load_Images_Node import IF_LoadImagess
+        _delegate_class = IF_LoadImagess
+    except ImportError:
+        try:
+            from nodes.bc_fileman.IF_Load_Images_Node import IFLoadImages
+            _delegate_class = IFLoadImages
+        except ImportError:
+            # Create a stub class if all imports fail
+            class _StubLoadImages:
+                @classmethod
+                def INPUT_TYPES(cls):
+                    return {"required": {"error": ("STRING", {"default": "IF_Load_Images_Node not available"})}}
+                RETURN_TYPES = ("STRING",)
+                RETURN_NAMES = ("error",)
+                OUTPUT_IS_LIST = (False,)
+                FUNCTION = "error"
+                CATEGORY = "🐻 Bear Cave/Error"
+                @classmethod
+                def IS_CHANGED(cls, *args, **kwargs):
+                    return float("NaN")
+                def error(self, *args, **kwargs):
+                    return ("IF_Load_Images_Node class not found. Please check the import.",)
+            _delegate_class = _StubLoadImages
 
 class BC_LOAD_IMAGES:
     def __init__(self):
-        self._delegate = IFLoadImagess()
+        if hasattr(_delegate_class, '__init__'):
+            self._delegate = _delegate_class()
+        else:
+            self._delegate = _delegate_class
 
     @classmethod
     def INPUT_TYPES(cls):
-        return IFLoadImagess.INPUT_TYPES()
+        return _delegate_class.INPUT_TYPES()
 
-    RETURN_TYPES = IFLoadImagess.RETURN_TYPES
-    RETURN_NAMES = IFLoadImagess.RETURN_NAMES
-    OUTPUT_IS_LIST = IFLoadImagess.OUTPUT_IS_LIST
-    FUNCTION = IFLoadImagess.FUNCTION
-    CATEGORY = IFLoadImagess.CATEGORY
+    RETURN_TYPES = _delegate_class.RETURN_TYPES
+    RETURN_NAMES = _delegate_class.RETURN_NAMES
+    OUTPUT_IS_LIST = _delegate_class.OUTPUT_IS_LIST
+    FUNCTION = _delegate_class.FUNCTION
+    CATEGORY = "🐻 Bear Cave/Images"  # Override category
 
     @classmethod
     def IS_CHANGED(cls, *args, **kwargs):
-        return IFLoadImagess.IS_CHANGED(*args, **kwargs)
+        return _delegate_class.IS_CHANGED(*args, **kwargs)
 
     def load_images(self, *args, **kwargs):
         return self._delegate.load_images(*args, **kwargs)
@@ -108,13 +139,13 @@ class BC_SAVE_IMAGES:
                 base_filename += "_" + ImageManager.sanitize_path_component(filename_text)
 
             # Save each image
-            for i, image in enumerate(images):
+            for idx, image in enumerate(images):
                 # Convert image tensor to PIL Image
-                i = 255. * image.cpu().numpy()
-                img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+                image_array = 255. * image.cpu().numpy()
+                img = Image.fromarray(np.clip(image_array, 0, 255).astype(np.uint8))
                 
                 # Generate filename
-                filename = f"{base_filename}_{i:05d}.{file_format}"
+                filename = f"{base_filename}_{idx:05d}.{file_format}"
                 filepath = os.path.join(output_path, filename)
                 
                 # Save with appropriate format and quality
