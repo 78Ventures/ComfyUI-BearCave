@@ -1,5 +1,5 @@
 # __init__.py 
-# Bear Cave Nodes with Auto-Install
+# ComfyUI-BearCave
 ######################################
 
 NODE_CLASS_MAPPINGS = {}

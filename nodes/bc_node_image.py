@@ -1,10 +1,11 @@
-# bear_nodes_image.py
+# bc_node_image.py
 ############################
 import numpy as np
 import torch
 from PIL import Image
 
-class BearImageLoRAConform:
+class BC_IMAGE_LORA_CONFORM:
+class BC_IMAGE_LORA_CONFORM:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -274,9 +275,9 @@ class BearImageLoRAConform:
 
 # Required for ComfyUI to register this node
 NODE_CLASS_MAPPINGS = {
-    "BearImageLoRAConform": BearImageLoRAConform
+    "BC_IMAGE_LORA_CONFORM": BC_IMAGE_LORA_CONFORM
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BearImageLoRAConform": "🐻 Conform for LoRA"
+    "BC_IMAGE_LORA_CONFORM": "🐻 Conform for LoRA"
 }

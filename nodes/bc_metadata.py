@@ -1,5 +1,7 @@
-# bear_nodes_exif.py
+# bc_metadata.py
 ############################
+# Manage metadata (e.g. EXIF) when processing and saving images
+###################################
 import os
 import torch
 import numpy as np
@@ -7,7 +9,7 @@ from PIL import Image, PngImagePlugin
 from pathlib import Path
 import folder_paths
 
-class BearExifWriter:
+class BC_EXIF_WRITER:
     def __init__(self):
         self.image_counter = {}
 
@@ -225,7 +227,11 @@ class BearExifWriter:
 
 # Node registration
 NODE_CLASS_MAPPINGS = {
-    "BearExifWriter": BearExifWriter
+    "BC_EXIF_WRITER": BC_EXIF_WRITER
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "BC_EXIF_WRITER": "🐻 Write EXIF Data"
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

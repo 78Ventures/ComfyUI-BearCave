@@ -1,4 +1,4 @@
-# bear_nodes_detection.py
+# bc_face_detection.py
 ############################
 import cv2
 import numpy as np
@@ -11,7 +11,7 @@ except ImportError:
     MEDIAPIPE_AVAILABLE = False
     print("MediaPipe not available. BearDetectFaceOrientation will not work.")
 
-class BearDetectFaceOrientation:
+class BC_DETECT_FACE_ORIENTATION:
     def __init__(self):
         if MEDIAPIPE_AVAILABLE:
             self.face_detection = mp.solutions.face_detection.FaceDetection(
@@ -227,9 +227,9 @@ class BearDetectFaceOrientation:
 
 
 NODE_CLASS_MAPPINGS = {
-    "BearDetectFaceOrientation": BearDetectFaceOrientation,
+    "BC_DETECT_FACE_ORIENTATION": BC_DETECT_FACE_ORIENTATION,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BearDetectFaceOrientation": "🐻 Face Orientation",
+    "BC_DETECT_FACE_ORIENTATION": "🐻 Face Orientation",
 }
