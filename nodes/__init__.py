@@ -20,6 +20,18 @@ def check_and_install_dependencies():
     except ImportError:
         missing_deps.append("opencv-python")
     
+    # Check for kohya-ss (for LoRa training)
+    try:
+        import kohya_ss
+    except ImportError:
+        missing_deps.append("kohya-ss")
+    
+    # Check for jsonschema (for LoRa metadata validation)
+    try:
+        import jsonschema
+    except ImportError:
+        missing_deps.append("jsonschema")
+    
     if missing_deps:
         print(f"🐻 Bear Cave: Missing dependencies: {', '.join(missing_deps)}")
         print("🐻 Bear Cave: Attempting automatic installation...")
@@ -34,6 +46,7 @@ def check_and_install_dependencies():
                     print("🐻 Bear Cave: Auto-install failed. Please install manually:")
                     print("   - mediapipe>=0.10.0")
                     print("   - opencv-python>=4.5.0")
+                    print("   - kohya-ss>=23.0.0")
             return len(missing_deps) == 0
         except Exception as e:
             print(f"🐻 Bear Cave: Auto-install error: {e}")
