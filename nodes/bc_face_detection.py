@@ -1,5 +1,9 @@
+############################
 # bc_face_detection.py
 ############################
+# Detect face orientation using MediaPipe
+############################
+
 import cv2
 import numpy as np
 import torch

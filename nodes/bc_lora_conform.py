@@ -1,4 +1,7 @@
-# bc_node_image.py
+############################
+# bc_lora_conform.py
+############################
+# FCrop and resize images to conform to LoRA training requirements
 ############################
 import numpy as np
 import torch
