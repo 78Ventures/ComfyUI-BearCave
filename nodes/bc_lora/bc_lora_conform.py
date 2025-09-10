@@ -26,6 +26,9 @@ class BC_IMAGE_LORA_CONFORM:
                 "face_center_y": ("FLOAT", {"forceInput": True}),
                 "face_width": ("FLOAT", {"forceInput": True}),
                 "face_height": ("FLOAT", {"forceInput": True}),
+                "face_pose": ("STRING", {"forceInput": True}),
+                "detection_confidence": ("FLOAT", {"forceInput": True}),
+                "face_detected": ("BOOLEAN", {"forceInput": True}),
                 # Additional processing options
                 "maintain_aspect": ("BOOLEAN", {"default": False}),
                 "padding_color": (["black", "white", "transparent", "blur"], {"default": "black"}),
@@ -36,30 +39,36 @@ class BC_IMAGE_LORA_CONFORM:
 
     RETURN_TYPES = (
         "IMAGE",     # Processed image
-        "STRING",    # Filename (pass-through)
-        "STRING",    # Relative path (pass-through)
-        "INT",       # Final width
-        "INT",       # Final height
-        "FLOAT",     # Scale factor applied
-        "STRING",    # Processing method used
-        "BOOLEAN",   # Was upscaled
-        "BOOLEAN",   # Was cropped
         "STRING",    # Crop coordinates (JSON)
+        "FLOAT",     # Detection confidence (pass-through)
+        "BOOLEAN",   # Face detected (pass-through)
+        "STRING",    # Face pose (pass-through)
+        "STRING",    # Filename (pass-through)
+        "INT",       # Final height
+        "STRING",    # Processing method used
         "STRING",    # Processing log
+        "STRING",    # Relative path (pass-through)
+        "FLOAT",     # Scale factor applied
+        "BOOLEAN",   # Was cropped
+        "BOOLEAN",   # Was upscaled
+        "INT",       # Final width
     )
     
     RETURN_NAMES = (
         "image",
-        "filename",
-        "relative_path", 
-        "width",
-        "height",
-        "scale_factor",
-        "method_used",
-        "was_upscaled",
-        "was_cropped",
         "crop_info",
-        "process_log"
+        "detection_confidence",
+        "face_detected",
+        "face_pose",
+        "filename",
+        "height",
+        "method_used",
+        "process_log",
+        "relative_path",
+        "scale_factor",
+        "was_cropped",
+        "was_upscaled",
+        "width"
     )
     
     FUNCTION = "crop_and_resize"
@@ -76,6 +85,9 @@ class BC_IMAGE_LORA_CONFORM:
         face_center_y = kwargs.get('face_center_y', 0.5)
         face_width = kwargs.get('face_width', 0.0)
         face_height = kwargs.get('face_height', 0.0)
+        face_pose = kwargs.get('face_pose', '')
+        detection_confidence = kwargs.get('detection_confidence', 0.0)
+        face_detected = kwargs.get('face_detected', False)
         maintain_aspect = kwargs.get('maintain_aspect', False)
         padding_color = kwargs.get('padding_color', 'black')
         upscale_threshold = kwargs.get('upscale_threshold', 1.5)
@@ -97,6 +109,15 @@ class BC_IMAGE_LORA_CONFORM:
             # Initialize processing log
             process_log = []
             process_log.append(f"Original size: {original_width}x{original_height}")
+            
+            # Add face detection info to processing log
+            if face_detected and face_pose:
+                process_log.append(f"Face detected: {face_pose} (confidence: {detection_confidence:.2f})")
+                process_log.append(f"Face bounds: center({face_center_x:.3f}, {face_center_y:.3f}) size({face_width:.3f}, {face_height:.3f})")
+            elif face_pose:
+                process_log.append(f"Face pose data: {face_pose}")
+            else:
+                process_log.append("No face detection data provided")
             
             # Determine if we need to upscale
             scale_factor = size / max(original_width, original_height)
@@ -169,18 +190,17 @@ class BC_IMAGE_LORA_CONFORM:
             process_log_str = "; ".join(process_log)
             
             return (
-                img_tensor, filename, relative_path,
-                final_size[0], final_size[1], scale_factor, method_used,
-                was_upscaled, was_cropped, json.dumps(crop_info),
-                process_log_str
+                img_tensor, json.dumps(crop_info), detection_confidence, face_detected, face_pose,
+                filename, final_size[1], method_used, process_log_str, relative_path,
+                scale_factor, was_cropped, was_upscaled, final_size[0]
             )
             
         except Exception as e:
             print(f"🐻 Bear Cave: Error in BearImageLoRAConform: {e}")
             return (
-                image, filename, relative_path,
-                0, 0, 1.0, "error", False, False, '{"error": true}',
-                f"Processing failed: {str(e)}"
+                image, '{"error": true}', detection_confidence, face_detected, face_pose,
+                filename, 0, "error", f"Processing failed: {str(e)}", relative_path,
+                1.0, False, False, 0
             )
 
     def _smart_crop(self, img, target_size, face_x, face_y, face_w, face_h, use_face_center):

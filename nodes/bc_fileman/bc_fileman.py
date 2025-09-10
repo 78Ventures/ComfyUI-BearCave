@@ -120,8 +120,45 @@ if DEPENDENCIES_OK:
 
         @classmethod
         def INPUT_TYPES(cls):
-            # Just pass through the original input types from the delegate
-            return _delegate_class.INPUT_TYPES()
+            # Get the original input types from the delegate
+            try:
+                original_types = _delegate_class.INPUT_TYPES()
+            except:
+                # Fallback if delegate fails
+                original_types = {
+                    "required": {
+                        "input_path": ("STRING", {"default": ""}),
+                        "start_index": ("INT", {"default": 0, "min": 0, "max": 9999}),
+                        "stop_index": ("INT", {"default": 10, "min": 1, "max": 9999}),
+                        "load_limit": (["10", "100", "1000", "10000", "100000"], {"default": "1000"}),
+                        "include_subfolders": ("BOOLEAN", {"default": True}),
+                        "sort_method": (["alphabetical", "numerical", "date_created", "date_modified"], {"default": "numerical"}),
+                        "filter_type": (["none", "png", "jpg", "jpeg", "webp", "gif", "bmp"], {"default": "none"}),
+                    }
+                }
+            
+            # Create a copy and ensure input_path can be connected
+            modified_types = {
+                "required": {},
+                "optional": {}
+            }
+            
+            # Copy all required fields except input_path
+            for key, value in original_types.get("required", {}).items():
+                if key == "input_path":
+                    # Move input_path to optional so it can be connected from other nodes
+                    modified_types["optional"]["input_path"] = value
+                elif key == "image":
+                    # Skip the image selector dropdown for now
+                    continue
+                else:
+                    modified_types["required"][key] = value
+            
+            # Copy optional fields
+            for key, value in original_types.get("optional", {}).items():
+                modified_types["optional"][key] = value
+            
+            return modified_types
 
         RETURN_TYPES = _delegate_class.RETURN_TYPES
         RETURN_NAMES = _delegate_class.RETURN_NAMES

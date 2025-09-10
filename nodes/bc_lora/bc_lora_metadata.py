@@ -26,6 +26,8 @@ class BC_LORA_METADATA:
                 "project_metadata": ("STRING", {"forceInput": True}),
                 "image_list": ("STRING", {"forceInput": True}),
                 "face_data": ("STRING", {"forceInput": True}),
+                "face_count": ("INT", {"forceInput": True}),
+                "detection_status": ("STRING", {"forceInput": True}),
                 # Caption customization
                 "include_quality_tags": ("BOOLEAN", {"default": True}),
                 "include_style_tags": ("BOOLEAN", {"default": True}),

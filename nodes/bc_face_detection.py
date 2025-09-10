@@ -42,35 +42,35 @@ class BC_DETECT_FACE_ORIENTATION:
         }
 
     RETURN_TYPES = (
-        "IMAGE",     # Pass-through image
-        "STRING",    # Face pose
+        "IMAGE",     # Pass-through image (always first)
         "FLOAT",     # Detection confidence
-        "INT",       # Number of faces detected
-        "BOOLEAN",   # Face detected
-        "STRING",    # Detection status
+        "STRING",    # Detailed results JSON
         "FLOAT",     # Face center X
         "FLOAT",     # Face center Y
-        "FLOAT",     # Face width
+        "INT",       # Number of faces detected
+        "BOOLEAN",   # Face detected
         "FLOAT",     # Face height
-        "STRING",    # Detailed results JSON
+        "STRING",    # Face pose
+        "FLOAT",     # Face width
         "STRING",    # Filename (pass-through)
         "STRING",    # Relative path (pass-through)
+        "STRING",    # Detection status
     )
     
     RETURN_NAMES = (
         "image",
-        "face_pose",
         "confidence",
+        "detection_data",
+        "face_center_x",
+        "face_center_y",
         "face_count",
         "face_detected",
-        "status",
-        "face_center_x",
-        "face_center_y", 
-        "face_width",
         "face_height",
-        "detection_data",
+        "face_pose",
+        "face_width",
         "filename",
-        "relative_path"
+        "relative_path",
+        "status"
     )
     
     FUNCTION = "detect_face_orientation"
@@ -98,9 +98,9 @@ class BC_DETECT_FACE_ORIENTATION:
         
         if not MEDIAPIPE_AVAILABLE or self.face_detection is None:
             return (
-                image, "mediapipe_unavailable", 0.0, 0, False, 
-                "MediaPipe not available", 0.0, 0.0, 0.0, 0.0,
-                '{"error": "MediaPipe not available"}', filename, relative_path
+                image, 0.0, '{"error": "MediaPipe not available"}', 0.0, 0.0, 
+                0, False, 0.0, "mediapipe_unavailable", 0.0,
+                filename, relative_path, "MediaPipe not available"
             )
         
         try:
@@ -219,14 +219,15 @@ class BC_DETECT_FACE_ORIENTATION:
         except Exception as e:
             print(f"🐻 Bear Cave: Error in face detection: {e}")
             return (
-                image, "error", 0.0, 0, False, f"Detection error: {str(e)}",
-                0.0, 0.0, 0.0, 0.0, f'{{"error": "{str(e)}"}}', filename, relative_path
+                image, 0.0, f'{{"error": "{str(e)}"}}', 0.0, 0.0,
+                0, False, 0.0, "error", 0.0,
+                filename, relative_path, f"Detection error: {str(e)}"
             )
 
         return (
-            image, pose, confidence, face_count, face_detected, status,
-            face_center_x, face_center_y, face_width, face_height,
-            json.dumps(detection_data, indent=2), filename, relative_path
+            image, confidence, json.dumps(detection_data, indent=2), face_center_x, face_center_y,
+            face_count, face_detected, face_height, pose, face_width,
+            filename, relative_path, status
         )
 
 

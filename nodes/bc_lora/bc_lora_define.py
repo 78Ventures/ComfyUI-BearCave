@@ -29,6 +29,14 @@ class BC_LORA_DEFINE:
                 "custom_base_model_path": ("STRING", {"default": ""}),
                 "create_folders": ("BOOLEAN", {"default": True}),
                 "overwrite_existing": ("BOOLEAN", {"default": False}),
+                # Additional EXIF metadata fields for training enrichment
+                "age": ("STRING", {"default": "", "placeholder": "Subject age (e.g., '25-30', 'child', 'adult')"}),
+                "gender": ("STRING", {"default": "", "placeholder": "Subject gender (e.g., 'male', 'female', 'non-binary')"}),
+                "ethnicity": ("STRING", {"default": "", "placeholder": "Subject ethnicity/background"}),
+                "lighting": ("STRING", {"default": "", "placeholder": "Lighting conditions (e.g., 'natural', 'studio', 'dramatic')"}),
+                "background": ("STRING", {"default": "", "placeholder": "Background type (e.g., 'indoor', 'outdoor', 'studio')"}),
+                "camera_angle": ("STRING", {"default": "", "placeholder": "Camera angle (e.g., 'front', 'profile', 'three-quarter')"}),
+                "additional_tags": ("STRING", {"default": "", "multiline": True, "placeholder": "Additional tags or metadata (one per line)"}),
             }
         }
 
@@ -66,6 +74,15 @@ class BC_LORA_DEFINE:
             create_folders = kwargs.get('create_folders', True)
             overwrite_existing = kwargs.get('overwrite_existing', False)
             
+            # Extract EXIF metadata fields
+            age = kwargs.get('age', '')
+            gender = kwargs.get('gender', '')
+            ethnicity = kwargs.get('ethnicity', '')
+            lighting = kwargs.get('lighting', '')
+            background = kwargs.get('background', '')
+            camera_angle = kwargs.get('camera_angle', '')
+            additional_tags = kwargs.get('additional_tags', '')
+            
             # Sanitize project name
             safe_project_name = self._sanitize_filename(project_name)
             if not safe_project_name:
@@ -95,7 +112,8 @@ class BC_LORA_DEFINE:
             project_metadata = self._create_project_metadata(
                 safe_project_name, subject_name, str(project_path),
                 trigger_words, base_model, performance_mode, description,
-                custom_base_model_path
+                custom_base_model_path, age, gender, ethnicity, lighting,
+                background, camera_angle, additional_tags
             )
             
             # Create training configuration
@@ -214,7 +232,9 @@ This folder contains the final LoRa model and training outputs.
     def _create_project_metadata(self, project_name: str, subject_name: str, 
                                 project_path: str, trigger_words: str, base_model: str,
                                 performance_mode: str, description: str, 
-                                custom_base_model_path: str) -> Dict[str, Any]:
+                                custom_base_model_path: str, age: str, gender: str,
+                                ethnicity: str, lighting: str, background: str,
+                                camera_angle: str, additional_tags: str) -> Dict[str, Any]:
         """Create project metadata structure"""
         from .utils.metadata_schema import LoRaMetadataSchema
         
@@ -233,6 +253,29 @@ This folder contains the final LoRa model and training outputs.
         
         if custom_base_model_path:
             metadata["custom_base_model_path"] = custom_base_model_path
+        
+        # Add EXIF metadata fields for training enrichment
+        exif_metadata = {}
+        if age:
+            exif_metadata["age"] = age
+        if gender:
+            exif_metadata["gender"] = gender
+        if ethnicity:
+            exif_metadata["ethnicity"] = ethnicity
+        if lighting:
+            exif_metadata["lighting"] = lighting
+        if background:
+            exif_metadata["background"] = background
+        if camera_angle:
+            exif_metadata["camera_angle"] = camera_angle
+        if additional_tags:
+            # Split additional tags by lines and filter empty ones
+            tags_list = [tag.strip() for tag in additional_tags.split('\n') if tag.strip()]
+            if tags_list:
+                exif_metadata["additional_tags"] = tags_list
+        
+        if exif_metadata:
+            metadata["subject_exif_metadata"] = exif_metadata
         
         return metadata
     
