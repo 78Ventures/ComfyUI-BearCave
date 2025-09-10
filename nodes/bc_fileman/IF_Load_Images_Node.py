@@ -399,7 +399,7 @@ class IFLoadImagess:
         
         return {
             "required": {
-                "image": (sorted(files), {"image_upload": True}),
+                "image": (sorted(files), {}),
                 "input_path": ("STRING", {"default": ""}),
                 "start_index": ("INT", {"default": 0, "min": 0, "max": 9999}),
                 "stop_index": ("INT", {"default": 10, "min": 1, "max": 9999}),
