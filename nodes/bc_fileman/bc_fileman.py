@@ -120,20 +120,8 @@ if DEPENDENCIES_OK:
 
         @classmethod
         def INPUT_TYPES(cls):
-            # Get the base input types from the delegate
-            base_inputs = _delegate_class.INPUT_TYPES()
-            
-            # Override input_path to work with folder browser extension
-            if "required" in base_inputs and "input_path" in base_inputs["required"]:
-                # Enhanced string input with folder browser support
-                base_inputs["required"]["input_path"] = ("STRING", {
-                    "default": "",
-                    "multiline": False,
-                    "placeholder": "Double-click to browse for folder...",
-                    "tooltip": "Double-click this field to open folder browser, or enter path manually"
-                })
-            
-            return base_inputs
+            # Just pass through the original input types from the delegate
+            return _delegate_class.INPUT_TYPES()
 
         RETURN_TYPES = _delegate_class.RETURN_TYPES
         RETURN_NAMES = _delegate_class.RETURN_NAMES
