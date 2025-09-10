@@ -1,6 +1,7 @@
 /**
- * Bear Cave BC_LOAD_IMAGES Folder Browser
- * Adds folder selection dialog to BC_LOAD_IMAGES nodes
+ * Bear Cave BC_LORA_DEFINE Folder Browser
+ * Adds folder selection dialog to BC_LORA_DEFINE project_base_path field
+ * Version: 2024-09-10-v2
  */
 
 import { app } from "../../scripts/app.js";
@@ -141,15 +142,25 @@ app.registerExtension({
     name: "BearCave.BC_LORA_DEFINE.FolderBrowser",
     
     beforeRegisterNodeDef(nodeType, nodeData) {
+        console.log("🐻 Bear Cave: Checking node type:", nodeData.name);
+        
+        // Explicitly block folder browser from BC_LOAD_IMAGES  
+        if (nodeData.name === "BC_LOAD_IMAGES") {
+            console.log("🐻 Bear Cave: BLOCKING folder browser from BC_LOAD_IMAGES node");
+            return; // Do nothing for BC_LOAD_IMAGES
+        }
+        
         if (nodeData.name === "BC_LORA_DEFINE") {
-            console.log("🐻 Bear Cave: Adding folder browser to BC_LORA_DEFINE");
+            console.log("🐻 Bear Cave: CORRECTLY Adding folder browser to BC_LORA_DEFINE node");
             
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function() {
                 const result = onNodeCreated?.apply(this, arguments);
                 
                 // Find the project_base_path widget
+                console.log("🐻 Bear Cave: Available widgets:", (this.widgets || []).map(w => w.name));
                 for (const widget of this.widgets || []) {
+                    console.log("🐻 Bear Cave: Checking widget:", widget.name);
                     if (widget.name === "project_base_path") {
                         // Store original mouse handler
                         const originalMouse = widget.mouse;
@@ -173,7 +184,7 @@ app.registerExtension({
                             }
                         };
                         
-                        console.log("🐻 Bear Cave: Folder browser attached to project_base_path widget");
+                        console.log("🐻 Bear Cave: ✅ Folder browser successfully attached to project_base_path widget on BC_LORA_DEFINE node");
                         break;
                     }
                 }
@@ -184,4 +195,4 @@ app.registerExtension({
     }
 });
 
-console.log("🐻 Bear Cave BC_LORA_DEFINE Folder Browser extension loaded");
+console.log("🐻 Bear Cave: BC_LORA_DEFINE Folder Browser extension loaded v2024-09-10-v2 - targets project_base_path field ONLY");
