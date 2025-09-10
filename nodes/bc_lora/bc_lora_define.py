@@ -29,7 +29,6 @@ class BC_LORA_DEFINE:
                 "custom_base_model_path": ("STRING", {"default": ""}),
                 "create_folders": ("BOOLEAN", {"default": True}),
                 "overwrite_existing": ("BOOLEAN", {"default": False}),
-                "browse_button": ("BUTTON", {"text": "📁 Set Project Path"}),
             }
         }
 

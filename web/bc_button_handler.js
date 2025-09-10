@@ -1,39 +1,38 @@
 /**
- * Handle button clicks for BC_LORA_DEFINE browse button
+ * Add folder browser to BC_LORA_DEFINE right-click menu
  */
 
 import { app } from "../../scripts/app.js";
 
 app.registerExtension({
-    name: "BearCave.ButtonHandler",
+    name: "BearCave.FolderBrowser",
     
     async beforeRegisterNodeDef(nodeType, nodeData) {
         if (nodeData.name === "BC_LORA_DEFINE") {
-            const onNodeCreated = nodeType.prototype.onNodeCreated;
-            nodeType.prototype.onNodeCreated = function() {
-                const result = onNodeCreated?.apply(this, arguments);
+            // Add to right-click menu
+            const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
+            nodeType.prototype.getExtraMenuOptions = function(canvas, menuOptions) {
+                getExtraMenuOptions?.apply(this, arguments);
                 
-                // Find the browse button and add click handler
-                setTimeout(() => {
-                    const browseButton = this.widgets.find(w => w.name === "browse_button");
-                    const projectPathWidget = this.widgets.find(w => w.name === "project_base_path");
-                    
-                    if (browseButton && projectPathWidget) {
-                        browseButton.callback = () => {
+                const projectPathWidget = this.widgets.find(w => w.name === "project_base_path");
+                if (projectPathWidget) {
+                    menuOptions.unshift({
+                        content: "📁 Set Project Path",
+                        callback: () => {
                             if (app.FileFolderAPI) {
+                                console.log("🐻 Bear Cave: Opening folder browser from menu");
                                 app.FileFolderAPI.open(projectPathWidget, 'folder');
                             } else {
                                 alert("FileBrowserAPI not available. Please install ComfyUI-FileBrowserAPI.");
                             }
-                        };
-                        console.log("🐻 Bear Cave: Button handler attached");
-                    }
-                }, 100);
-                
-                return result;
+                        }
+                    }, null);
+                }
             };
+            
+            console.log("🐻 Bear Cave: Right-click menu folder browser added to BC_LORA_DEFINE");
         }
     }
 });
 
-console.log("🐻 Bear Cave: Button handler loaded");
+console.log("🐻 Bear Cave: Folder browser menu extension loaded");
