@@ -127,7 +127,7 @@
       ],
       "outputs": [
         {
-          "name": "images",
+          "name": "image_batch",
           "shape": 6,
           "type": "IMAGE",
           "slot_index": 0,
@@ -210,7 +210,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "image",
+          "name": "image_batch",
           "type": "IMAGE",
           "link": 9
         },
@@ -235,7 +235,7 @@
       ],
       "outputs": [
         {
-          "name": "image",
+          "name": "image_batch",
           "type": "IMAGE",
           "slot_index": 0,
           "links": [
@@ -349,7 +349,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "image",
+          "name": "image_batch",
           "type": "IMAGE",
           "link": 10
         },
@@ -416,7 +416,7 @@
       ],
       "outputs": [
         {
-          "name": "image",
+          "name": "image_batch",
           "type": "IMAGE",
           "slot_index": 0,
           "links": [
@@ -531,7 +531,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "images",
+          "name": "image_batch",
           "type": "IMAGE",
           "link": 24
         },
@@ -785,7 +785,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "images",
+          "name": "image_batch",
           "type": "IMAGE",
           "link": 18
         }
@@ -864,7 +864,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "image",
+          "name": "image_batch",
           "type": "IMAGE",
           "link": 15
         },

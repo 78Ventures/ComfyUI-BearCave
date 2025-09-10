@@ -211,7 +211,7 @@ if DEPENDENCIES_OK:
         def INPUT_TYPES(s):
             return {
                 "required": {
-                    "images": ("IMAGE",),
+                    "image_batch": ("IMAGE",),
                     "output_path": ("STRING", {"default": ""}),
                     "file_prefix": ("STRING", {"default": "image"}),
                     "filename_text": ("STRING", {"default": ""}),
@@ -227,7 +227,7 @@ if DEPENDENCIES_OK:
         FUNCTION = "save_images"
         CATEGORY = "🐻 Bear Cave/Images"
 
-        def save_images(self, images, output_path="", file_prefix="image", filename_text="", file_format="png", quality=100, sort_method="numerical"):
+        def save_images(self, image_batch, output_path="", file_prefix="image", filename_text="", file_format="png", quality=100, sort_method="numerical"):
             saved_paths = []
             
             try:
@@ -252,7 +252,7 @@ if DEPENDENCIES_OK:
                     base_filename += "_" + ImageManager.sanitize_path_component(filename_text)
 
                 # Save each image
-                for idx, image in enumerate(images):
+                for idx, image in enumerate(image_batch):
                     # Convert image tensor to PIL Image
                     image_array = 255. * image.cpu().numpy()
                     img = Image.fromarray(np.clip(image_array, 0, 255).astype(np.uint8))

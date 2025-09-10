@@ -29,7 +29,7 @@ class BC_DETECT_FACE_ORIENTATION:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": ("IMAGE",),
+                "image_batch": ("IMAGE",),
             },
             "optional": {
                 # Connection points from other nodes
@@ -42,41 +42,41 @@ class BC_DETECT_FACE_ORIENTATION:
         }
 
     RETURN_TYPES = (
-        "IMAGE",     # Pass-through image (always first)
+        "IMAGE",     # Pass-through image
+        "STRING",    # Face pose
         "FLOAT",     # Detection confidence
-        "STRING",    # Detailed results JSON
-        "FLOAT",     # Face center X
-        "FLOAT",     # Face center Y
         "INT",       # Number of faces detected
         "BOOLEAN",   # Face detected
-        "FLOAT",     # Face height
-        "STRING",    # Face pose
+        "STRING",    # Detection status
+        "FLOAT",     # Face center X
+        "FLOAT",     # Face center Y
         "FLOAT",     # Face width
+        "FLOAT",     # Face height
+        "STRING",    # Detailed results JSON
         "STRING",    # Filename (pass-through)
         "STRING",    # Relative path (pass-through)
-        "STRING",    # Detection status
     )
     
     RETURN_NAMES = (
-        "image",
+        "image_batch",
+        "face_pose",
         "confidence",
-        "detection_data",
-        "face_center_x",
-        "face_center_y",
         "face_count",
         "face_detected",
-        "face_height",
-        "face_pose",
+        "status",
+        "face_center_x",
+        "face_center_y", 
         "face_width",
+        "face_height",
+        "detection_data",
         "filename",
-        "relative_path",
-        "status"
+        "relative_path"
     )
     
     FUNCTION = "detect_face_orientation"
     CATEGORY = "🐻 Bear Cave/Detection"
 
-    def detect_face_orientation(self, image, **kwargs):
+    def detect_face_orientation(self, image_batch, **kwargs):
         import json
         
         # Extract optional inputs
@@ -98,17 +98,17 @@ class BC_DETECT_FACE_ORIENTATION:
         
         if not MEDIAPIPE_AVAILABLE or self.face_detection is None:
             return (
-                image, 0.0, '{"error": "MediaPipe not available"}', 0.0, 0.0, 
-                0, False, 0.0, "mediapipe_unavailable", 0.0,
-                filename, relative_path, "MediaPipe not available"
+                image_batch, "mediapipe_unavailable", 0.0, 0, False, 
+                "MediaPipe not available", 0.0, 0.0, 0.0, 0.0,
+                '{"error": "MediaPipe not available"}', filename, relative_path
             )
         
         try:
             # Convert ComfyUI tensor to numpy array
-            if isinstance(image, torch.Tensor):
-                image_np = image[0].cpu().numpy()
+            if isinstance(image_batch, torch.Tensor):
+                image_np = image_batch[0].cpu().numpy()
             else:
-                image_np = image[0] if len(image.shape) == 4 else image
+                image_np = image_batch[0] if len(image_batch.shape) == 4 else image_batch
             
             # Convert from [0,1] to [0,255] and to uint8
             image_np = (image_np * 255).astype(np.uint8)
@@ -219,15 +219,14 @@ class BC_DETECT_FACE_ORIENTATION:
         except Exception as e:
             print(f"🐻 Bear Cave: Error in face detection: {e}")
             return (
-                image, 0.0, f'{{"error": "{str(e)}"}}', 0.0, 0.0,
-                0, False, 0.0, "error", 0.0,
-                filename, relative_path, f"Detection error: {str(e)}"
+                image_batch, "error", 0.0, 0, False, f"Detection error: {str(e)}",
+                0.0, 0.0, 0.0, 0.0, f'{{"error": "{str(e)}"}}', filename, relative_path
             )
 
         return (
-            image, confidence, json.dumps(detection_data, indent=2), face_center_x, face_center_y,
-            face_count, face_detected, face_height, pose, face_width,
-            filename, relative_path, status
+            image_batch, pose, confidence, face_count, face_detected, status,
+            face_center_x, face_center_y, face_width, face_height,
+            json.dumps(detection_data, indent=2), filename, relative_path
         )
 
 

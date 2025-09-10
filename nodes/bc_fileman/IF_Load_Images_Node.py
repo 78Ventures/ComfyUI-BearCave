@@ -419,7 +419,7 @@ class IFLoadImagess:
         }
 
     RETURN_TYPES = ("IMAGE", "MASK", "STRING", "STRING", "STRING", "INT", "IMAGE", "MASK")
-    RETURN_NAMES = ("images", "masks", "image_paths", "filenames", "count_str", "count_int", "images_batch", "masks_batch")
+    RETURN_NAMES = ("image_batch", "masks", "image_paths", "filenames", "count_str", "count_int", "images_batch", "masks_batch")
     OUTPUT_IS_LIST = (True, True, True, True, True, True, False, False)
     FUNCTION = "load_images"
     CATEGORY = "ImpactFrames💥🎞️/images"

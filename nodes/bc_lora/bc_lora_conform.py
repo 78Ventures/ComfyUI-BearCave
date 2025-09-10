@@ -12,7 +12,7 @@ class BC_IMAGE_LORA_CONFORM:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": ("IMAGE",),
+                "image_batch": ("IMAGE",),
                 "size": ("INT", {"default": 1024, "min": 64, "max": 4096, "step": 64}),
                 "resize_method": (["LANCZOS", "BICUBIC", "BILINEAR", "NEAREST"], {"default": "LANCZOS"}),
                 "crop_method": (["center", "smart", "face_center", "top", "bottom"], {"default": "center"}),
@@ -39,42 +39,42 @@ class BC_IMAGE_LORA_CONFORM:
 
     RETURN_TYPES = (
         "IMAGE",     # Processed image
+        "STRING",    # Filename (pass-through)
+        "STRING",    # Relative path (pass-through)
+        "INT",       # Final width
+        "INT",       # Final height
+        "FLOAT",     # Scale factor applied
+        "STRING",    # Processing method used
+        "BOOLEAN",   # Was upscaled
+        "BOOLEAN",   # Was cropped
         "STRING",    # Crop coordinates (JSON)
+        "STRING",    # Processing log
+        "STRING",    # Face pose (pass-through)
         "FLOAT",     # Detection confidence (pass-through)
         "BOOLEAN",   # Face detected (pass-through)
-        "STRING",    # Face pose (pass-through)
-        "STRING",    # Filename (pass-through)
-        "INT",       # Final height
-        "STRING",    # Processing method used
-        "STRING",    # Processing log
-        "STRING",    # Relative path (pass-through)
-        "FLOAT",     # Scale factor applied
-        "BOOLEAN",   # Was cropped
-        "BOOLEAN",   # Was upscaled
-        "INT",       # Final width
     )
     
     RETURN_NAMES = (
-        "image",
-        "crop_info",
-        "detection_confidence",
-        "face_detected",
-        "face_pose",
+        "image_batch",
         "filename",
+        "relative_path", 
+        "width",
         "height",
-        "method_used",
-        "process_log",
-        "relative_path",
         "scale_factor",
-        "was_cropped",
+        "method_used",
         "was_upscaled",
-        "width"
+        "was_cropped",
+        "crop_info",
+        "process_log",
+        "face_pose",
+        "detection_confidence",
+        "face_detected"
     )
     
     FUNCTION = "crop_and_resize"
     CATEGORY = "🐻 Bear Cave/LoRa"
 
-    def crop_and_resize(self, image, size, resize_method, crop_method, **kwargs):
+    def crop_and_resize(self, image_batch, size, resize_method, crop_method, **kwargs):
         import json
         
         # Extract optional inputs
@@ -95,10 +95,10 @@ class BC_IMAGE_LORA_CONFORM:
         
         try:
             # Convert ComfyUI tensor to PIL
-            if isinstance(image, torch.Tensor):
-                img_np = image[0].cpu().numpy()
+            if isinstance(image_batch, torch.Tensor):
+                img_np = image_batch[0].cpu().numpy()
             else:
-                img_np = image[0] if len(image.shape) == 4 else image
+                img_np = image_batch[0] if len(image_batch.shape) == 4 else image_batch
             
             img_np = (img_np * 255).clip(0, 255).astype(np.uint8)
             img_pil = Image.fromarray(img_np, mode="RGB")
@@ -190,17 +190,18 @@ class BC_IMAGE_LORA_CONFORM:
             process_log_str = "; ".join(process_log)
             
             return (
-                img_tensor, json.dumps(crop_info), detection_confidence, face_detected, face_pose,
-                filename, final_size[1], method_used, process_log_str, relative_path,
-                scale_factor, was_cropped, was_upscaled, final_size[0]
+                img_tensor, filename, relative_path,
+                final_size[0], final_size[1], scale_factor, method_used,
+                was_upscaled, was_cropped, json.dumps(crop_info),
+                process_log_str, face_pose, detection_confidence, face_detected
             )
             
         except Exception as e:
             print(f"🐻 Bear Cave: Error in BearImageLoRAConform: {e}")
             return (
-                image, '{"error": true}', detection_confidence, face_detected, face_pose,
-                filename, 0, "error", f"Processing failed: {str(e)}", relative_path,
-                1.0, False, False, 0
+                image_batch, filename, relative_path,
+                0, 0, 1.0, "error", False, False, '{"error": true}',
+                f"Processing failed: {str(e)}", face_pose, detection_confidence, face_detected
             )
 
     def _smart_crop(self, img, target_size, face_x, face_y, face_w, face_h, use_face_center):

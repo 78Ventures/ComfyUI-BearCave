@@ -17,7 +17,7 @@ class BC_EXIF_WRITER:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": ("IMAGE",),
+                "image_batch": ("IMAGE",),
                 "expression": ("STRING", {"default": "neutral"}),
                 "pose": ("STRING", {"default": "center"}),
                 "note": ("STRING", {"default": "NOTE"}),
@@ -75,7 +75,7 @@ class BC_EXIF_WRITER:
     CATEGORY = "🐻 Bear Cave/EXIF"
     OUTPUT_NODE = True
 
-    def write(self, image, expression, pose, note, subject, output_dir, **kwargs):
+    def write(self, image_batch, expression, pose, note, subject, output_dir, **kwargs):
         import json
         from datetime import datetime
         
@@ -104,10 +104,10 @@ class BC_EXIF_WRITER:
         
         try:
             # Convert ComfyUI tensor to PIL Image
-            if isinstance(image, torch.Tensor):
-                img_np = image[0].cpu().numpy()
+            if isinstance(image_batch, torch.Tensor):
+                img_np = image_batch[0].cpu().numpy()
             else:
-                img_np = image[0] if len(image.shape) == 4 else image
+                img_np = image_batch[0] if len(image_batch.shape) == 4 else image_batch
             
             img_np = (img_np * 255).clip(0, 255).astype(np.uint8)
             pil_img = Image.fromarray(img_np, mode="RGB")
