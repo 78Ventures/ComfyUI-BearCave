@@ -120,7 +120,19 @@ if DEPENDENCIES_OK:
 
         @classmethod
         def INPUT_TYPES(cls):
-            return _delegate_class.INPUT_TYPES()
+            # Get the base input types from the delegate
+            base_inputs = _delegate_class.INPUT_TYPES()
+            
+            # Override input_path to add folder browsing widget
+            if "required" in base_inputs and "input_path" in base_inputs["required"]:
+                # Try adding a widget for folder selection
+                base_inputs["required"]["input_path"] = ("STRING", {
+                    "default": "",
+                    "multiline": False,
+                    "placeholder": "Click to select folder or enter path manually"
+                })
+            
+            return base_inputs
 
         RETURN_TYPES = _delegate_class.RETURN_TYPES
         RETURN_NAMES = _delegate_class.RETURN_NAMES
