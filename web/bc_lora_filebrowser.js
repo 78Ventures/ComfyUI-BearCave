@@ -51,9 +51,22 @@ app.registerExtension({
                             console.log("🐻 Bear Cave: Total widgets now:", this.widgets.length);
                             console.log("🐻 Bear Cave: Widget names:", this.widgets.map(w => w.name));
                             
-                            // Force UI refresh
+                            // Force UI refresh - more aggressive approach
                             this.setDirtyCanvas(true, true);
                             this.size = this.computeSize();
+                            
+                            // Force a complete redraw
+                            if (app.graph && app.canvas) {
+                                app.canvas.setDirty(true, true);
+                                app.graph.setDirtyCanvas(true, true);
+                            }
+                            
+                            // Try to trigger a node resize
+                            if (this.onResize) {
+                                this.onResize(this.size);
+                            }
+                            
+                            console.log("🐻 Bear Cave: Forced UI refresh and resize");
                         }
                     } else {
                         console.log("🐻 Bear Cave: Still waiting for FileFolderAPI... Checked app.FileFolderAPI:", !!app.FileFolderAPI, "window.FileFolderAPI:", !!window.FileFolderAPI);
