@@ -233,7 +233,3 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "BC_EXIF_WRITER": "🐻 Write EXIF Data"
 }
-
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "BearExifWriter": "🐻 Write EXIF Data"
-}
