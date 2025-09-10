@@ -36,12 +36,26 @@ app.registerExtension({
                             if (now - lastClickTime < 300) {
                                 // Double-click detected
                                 console.log("🐻 Bear Cave: Double-click detected on project_base_path!");
+                                console.log("🐻 Bear Cave: app.FileFolderAPI:", app.FileFolderAPI);
+                                console.log("🐻 Bear Cave: typeof app.FileFolderAPI:", typeof app.FileFolderAPI);
+                                
                                 if (app.FileFolderAPI) {
-                                    console.log("🐻 Bear Cave: Opening FileFolderAPI...");
-                                    app.FileFolderAPI.open(projectPathWidget, 'folder');
+                                    console.log("🐻 Bear Cave: Attempting to open FileFolderAPI...");
+                                    console.log("🐻 Bear Cave: FileFolderAPI.open method:", app.FileFolderAPI.open);
+                                    
+                                    try {
+                                        const result = app.FileFolderAPI.open(projectPathWidget, 'folder');
+                                        console.log("🐻 Bear Cave: FileFolderAPI.open result:", result);
+                                    } catch (error) {
+                                        console.error("🐻 Bear Cave: Error calling FileFolderAPI.open:", error);
+                                        const path = prompt('FileFolderAPI error. Enter project folder path:', projectPathWidget.value || '');
+                                        if (path !== null) {
+                                            projectPathWidget.value = path;
+                                        }
+                                    }
                                 } else {
                                     console.error("🐻 Bear Cave: FileFolderAPI not available");
-                                    const path = prompt('Enter project folder path:', projectPathWidget.value || '');
+                                    const path = prompt('FileFolderAPI not available. Enter project folder path:', projectPathWidget.value || '');
                                     if (path !== null) {
                                         projectPathWidget.value = path;
                                     }
