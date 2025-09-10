@@ -8,6 +8,7 @@ import os
 import json
 import time
 import threading
+import shutil
 from pathlib import Path
 from typing import Dict, Any, Optional, Callable
 
@@ -17,6 +18,86 @@ class BC_LORA_TRAIN:
     # Class-level training state management
     _active_trainings = {}
     _training_lock = threading.Lock()
+    
+    @staticmethod
+    def _find_comfyui_models_path() -> Optional[str]:
+        """Find ComfyUI's models/loras directory"""
+        try:
+            # Try to import folder_paths from ComfyUI to get the models directory
+            try:
+                import folder_paths
+                models_dir = folder_paths.get_folder_paths("loras")
+                if models_dir and len(models_dir) > 0:
+                    return models_dir[0]  # Return first available path
+            except ImportError:
+                pass
+            
+            # Fallback: Search for ComfyUI installation
+            potential_paths = [
+                # Check if we're running within ComfyUI
+                os.path.join(os.getcwd(), "models", "loras"),
+                # Common ComfyUI installation locations
+                os.path.expanduser("~/ComfyUI/models/loras"),
+                os.path.expanduser("~/Documents/ComfyUI/models/loras"),
+                "/opt/ComfyUI/models/loras",
+                "C:/ComfyUI/models/loras",
+                # Check parent directories for ComfyUI
+                os.path.join(os.path.dirname(os.getcwd()), "ComfyUI", "models", "loras"),
+                os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "ComfyUI", "models", "loras"),
+            ]
+            
+            for path in potential_paths:
+                if os.path.exists(path) and os.path.isdir(path):
+                    return path
+            
+            return None
+            
+        except Exception as e:
+            print(f"🐻 Bear Cave LoRa: Error finding ComfyUI models path: {e}")
+            return None
+    
+    @staticmethod
+    def _copy_lora_to_comfyui(lora_path: str, project_name: str = None) -> Dict[str, Any]:
+        """Copy trained LoRa to ComfyUI models directory"""
+        result = {
+            "copied": False,
+            "destination": None,
+            "error": None,
+            "message": ""
+        }
+        
+        try:
+            # Find ComfyUI models directory
+            comfyui_models_path = BC_LORA_TRAIN._find_comfyui_models_path()
+            if not comfyui_models_path:
+                result["error"] = "ComfyUI models/loras directory not found"
+                result["message"] = "Could not locate ComfyUI installation. Please copy LoRa manually."
+                return result
+            
+            # Generate destination filename
+            lora_filename = os.path.basename(lora_path)
+            if project_name:
+                # Add project name prefix for easier identification
+                name, ext = os.path.splitext(lora_filename)
+                lora_filename = f"bearcave_{project_name}_{name}{ext}"
+            
+            destination = os.path.join(comfyui_models_path, lora_filename)
+            
+            # Copy the file
+            shutil.copy2(lora_path, destination)
+            
+            result["copied"] = True
+            result["destination"] = destination
+            result["message"] = f"LoRa copied to ComfyUI: {lora_filename}"
+            
+            print(f"🐻 Bear Cave LoRa: Successfully copied {lora_filename} to ComfyUI models directory")
+            
+        except Exception as e:
+            result["error"] = str(e)
+            result["message"] = f"Failed to copy LoRa to ComfyUI: {e}"
+            print(f"🐻 Bear Cave LoRa: Error copying to ComfyUI: {e}")
+        
+        return result
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -54,6 +135,7 @@ class BC_LORA_TRAIN:
         "BOOLEAN",   # Training active
         "STRING",    # Status message
         "STRING",    # Training results (JSON)
+        "STRING",    # ComfyUI copy status (JSON)
     )
     
     RETURN_NAMES = (
@@ -65,7 +147,8 @@ class BC_LORA_TRAIN:
         "training_log",
         "training_active",
         "status_message",
-        "training_results"
+        "training_results",
+        "comfyui_copy_status"
     )
     
     FUNCTION = "execute_training"
@@ -372,12 +455,48 @@ class BC_LORA_TRAIN:
         except Exception as e:
             print(f"🐻 Bear Cave LoRa: Could not find sample images: {e}")
         
+        # Copy LoRa to ComfyUI models directory
+        results["comfyui_copy"] = {"copied": False, "message": "No model to copy"}
+        if model_path and os.path.exists(model_path):
+            try:
+                # Extract project name from training state for better naming
+                project_meta = training_state.get('project_metadata', {})
+                project_name = None
+                if isinstance(project_meta, dict):
+                    project_name = project_meta.get('project_name') or project_meta.get('subject_name')
+                elif isinstance(project_meta, str):
+                    try:
+                        meta_dict = json.loads(project_meta)
+                        project_name = meta_dict.get('project_name') or meta_dict.get('subject_name')
+                    except:
+                        pass
+                
+                # Copy to ComfyUI models directory
+                copy_result = BC_LORA_TRAIN._copy_lora_to_comfyui(model_path, project_name)
+                results["comfyui_copy"] = copy_result
+                
+                if copy_result["copied"]:
+                    print(f"🐻 Bear Cave LoRa: ✅ {copy_result['message']}")
+                else:
+                    print(f"🐻 Bear Cave LoRa: ⚠️ {copy_result['message']}")
+                    
+            except Exception as e:
+                results["comfyui_copy"] = {
+                    "copied": False, 
+                    "error": str(e),
+                    "message": f"Error copying to ComfyUI: {e}"
+                }
+                print(f"🐻 Bear Cave LoRa: Error in ComfyUI copy process: {e}")
+        
         return results
     
     def _status_return(self, status: str, progress: str, epoch_info: str, 
                       metrics: Dict[str, Any], model_path: str, log: str,
                       active: bool, message: str, results: Dict[str, Any]):
         """Return training status"""
+        # Extract ComfyUI copy status from results
+        comfyui_copy = results.get("comfyui_copy", {"copied": False, "message": "No copy status"})
+        
         return (
             status,
             progress,
@@ -387,7 +506,8 @@ class BC_LORA_TRAIN:
             log,
             active,
             message,
-            json.dumps(results, indent=2)
+            json.dumps(results, indent=2),
+            json.dumps(comfyui_copy, indent=2)
         )
     
     def _idle_return(self, message: str):

@@ -123,13 +123,14 @@ if DEPENDENCIES_OK:
             # Get the base input types from the delegate
             base_inputs = _delegate_class.INPUT_TYPES()
             
-            # Override input_path to add folder browsing widget
+            # Override input_path to work with folder browser extension
             if "required" in base_inputs and "input_path" in base_inputs["required"]:
-                # Try adding a widget for folder selection
+                # Enhanced string input with folder browser support
                 base_inputs["required"]["input_path"] = ("STRING", {
                     "default": "",
                     "multiline": False,
-                    "placeholder": "Click to select folder or enter path manually"
+                    "placeholder": "Double-click to browse for folder...",
+                    "tooltip": "Double-click this field to open folder browser, or enter path manually"
                 })
             
             return base_inputs
