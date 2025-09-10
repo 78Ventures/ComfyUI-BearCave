@@ -1,84 +1,124 @@
 /**
- * Add double-click folder browser to BC_LORA_DEFINE project_base_path field
+ * Add folder browser functionality to BC_LORA_DEFINE using ComfyUI-FileBrowserAPI
  */
 
 import { app } from "../../scripts/app.js";
 
-console.log("🐻 Bear Cave: Loading double-click folder browser...");
+console.log("🐻 Bear Cave: Loading folder browser with FileBrowserAPI...");
 
 app.registerExtension({
-    name: "BearCave.DoubleClickBrowser",
+    name: "BearCave.FolderBrowser",
     
     async beforeRegisterNodeDef(nodeType, nodeData) {
         if (nodeData.name === "BC_LORA_DEFINE") {
-            console.log("🐻 Bear Cave: Setting up double-click for BC_LORA_DEFINE");
+            console.log("🐻 Bear Cave: Setting up folder browser for BC_LORA_DEFINE");
             
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function() {
                 const result = onNodeCreated?.apply(this, arguments);
                 
-                console.log("🐻 Bear Cave: BC_LORA_DEFINE node created");
+                console.log("🐻 Bear Cave: BC_LORA_DEFINE node created, widgets:", this.widgets?.map(w => w.name));
                 
-                // Add double-click handler to project_base_path widget
+                // Add folder browser functionality
                 setTimeout(() => {
-                    const projectPathWidget = this.widgets.find(w => w.name === "project_base_path");
+                    console.log("🐻 Bear Cave: Timeout executing, widgets:", this.widgets?.map(w => w.name));
+                    const projectPathWidget = this.widgets?.find(w => w.name === "project_base_path");
                     if (projectPathWidget) {
-                        console.log("🐻 Bear Cave: Found project_base_path widget, adding double-click handler");
+                        console.log("🐻 Bear Cave: Found project_base_path widget, adding button...");
                         
-                        // Store original callback
-                        const originalCallback = projectPathWidget.callback;
-                        
-                        // Track clicks for double-click detection
-                        let lastClickTime = 0;
-                        
-                        projectPathWidget.callback = function(value, widget, node, pos, event) {
-                            const now = Date.now();
-                            if (now - lastClickTime < 300) {
-                                // Double-click detected
-                                console.log("🐻 Bear Cave: Double-click detected on project_base_path!");
-                                console.log("🐻 Bear Cave: app.FileFolderAPI:", app.FileFolderAPI);
-                                console.log("🐻 Bear Cave: typeof app.FileFolderAPI:", typeof app.FileFolderAPI);
+                        try {
+                            // Add browse button next to the path widget
+                            const button = this.addWidget("button", "📁 Browse Folder", null, () => {
+                                console.log("🐻 Bear Cave: Browse button clicked!");
                                 
                                 if (app.FileFolderAPI) {
-                                    console.log("🐻 Bear Cave: Attempting to open FileFolderAPI...");
-                                    console.log("🐻 Bear Cave: FileFolderAPI.open method:", app.FileFolderAPI.open);
-                                    
-                                    try {
-                                        const result = app.FileFolderAPI.open(projectPathWidget, 'folder');
-                                        console.log("🐻 Bear Cave: FileFolderAPI.open result:", result);
-                                    } catch (error) {
-                                        console.error("🐻 Bear Cave: Error calling FileFolderAPI.open:", error);
-                                        const path = prompt('FileFolderAPI error. Enter project folder path:', projectPathWidget.value || '');
-                                        if (path !== null) {
-                                            projectPathWidget.value = path;
-                                        }
-                                    }
+                                    console.log("🐻 Bear Cave: Using FileFolderAPI");
+                                    app.FileFolderAPI.open(projectPathWidget, 'folder');
                                 } else {
-                                    console.error("🐻 Bear Cave: FileFolderAPI not available");
-                                    const path = prompt('FileFolderAPI not available. Enter project folder path:', projectPathWidget.value || '');
-                                    if (path !== null) {
-                                        projectPathWidget.value = path;
-                                    }
+                                    console.warn("🐻 Bear Cave: FileFolderAPI not available, falling back to manual input");
+                                    showManualInput(projectPathWidget);
                                 }
-                            }
-                            lastClickTime = now;
+                            });
                             
-                            // Call original callback
-                            if (originalCallback) {
-                                return originalCallback.call(this, value, widget, node, pos, event);
-                            }
-                        };
+                            console.log("🐻 Bear Cave: Browse button added successfully:", button);
+                            
+                            // Force a redraw
+                            this.setDirtyCanvas(true, true);
+                            
+                        } catch (error) {
+                            console.error("🐻 Bear Cave: Error adding button:", error);
+                        }
                         
-                        console.log("🐻 Bear Cave: Double-click handler attached to project_base_path");
                     } else {
-                        console.error("🐻 Bear Cave: project_base_path widget not found");
+                        console.error("🐻 Bear Cave: project_base_path widget not found!");
+                        console.error("🐻 Bear Cave: Available widgets:", this.widgets?.map(w => w.name));
                     }
-                }, 100);
+                }, 200);
                 
                 return result;
+            };
+            
+            // Also add double-click functionality as backup
+            const onDblClick = nodeType.prototype.onDblClick;
+            nodeType.prototype.onDblClick = function() {
+                onDblClick?.apply(this, arguments);
+                console.log("🐻 Bear Cave: Node double-clicked");
+                
+                const projectPathWidget = this.widgets?.find(w => w.name === "project_base_path");
+                if (app.FileFolderAPI && projectPathWidget) {
+                    console.log("🐻 Bear Cave: Opening folder browser via double-click");
+                    app.FileFolderAPI.open(projectPathWidget, 'folder');
+                } else if (projectPathWidget) {
+                    console.warn("🐻 Bear Cave: FileFolderAPI not available, using manual input");
+                    showManualInput(projectPathWidget);
+                }
+            };
+            
+            // Add right-click menu option
+            const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
+            nodeType.prototype.getExtraMenuOptions = function(_, menuOptions) {
+                getExtraMenuOptions?.apply(this, arguments);
+                
+                const projectPathWidget = this.widgets?.find(w => w.name === "project_base_path");
+                if (projectPathWidget) {
+                    menuOptions.unshift({
+                        content: "📁 Browse Project Folder",
+                        callback: () => {
+                            console.log("🐻 Bear Cave: Menu browse option selected");
+                            if (app.FileFolderAPI) {
+                                app.FileFolderAPI.open(projectPathWidget, 'folder');
+                            } else {
+                                showManualInput(projectPathWidget);
+                            }
+                        }
+                    }, null);
+                }
             };
         }
     }
 });
+
+function showManualInput(widget) {
+    const currentValue = widget.value || '';
+    
+    const helpText = `📁 FOLDER BROWSER (Manual Input)
+
+FileBrowserAPI not available. Enter the full path where your LoRa projects will be stored:
+
+Examples:
+• macOS: /Users/YourName/Documents/LoRa-Projects
+• Windows: C:\\Users\\YourName\\Documents\\LoRa-Projects
+• Linux: /home/yourname/lora-projects
+
+The node will create a subfolder here for your specific project.
+
+Current value: ${currentValue}`;
+    
+    const newPath = prompt(helpText, currentValue);
+    if (newPath !== null && newPath.trim() !== '') {
+        widget.value = newPath.trim();
+        console.log("🐻 Bear Cave: Manual path entered:", widget.value);
+    }
+}
 
 console.log("🐻 Bear Cave: Double-click folder browser extension loaded");
