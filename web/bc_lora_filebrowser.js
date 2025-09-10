@@ -38,10 +38,14 @@ app.registerExtension({
                             console.log("🐻 Bear Cave: Found project_base_path widget, adding browse button");
                             
                             // Add a browse button using FileBrowserAPI
-                            this.addWidget("button", "📁 Set Project Path", null, () => {
+                            const browseWidget = this.addWidget("button", "📁 Set Project Path", null, () => {
                                 console.log("🐻 Bear Cave: Browse button clicked");
                                 api.open(projectPathWidget, 'folder');
                             });
+                            
+                            console.log("🐻 Bear Cave: Button widget created:", browseWidget);
+                            console.log("🐻 Bear Cave: Button widget type:", browseWidget?.type);
+                            console.log("🐻 Bear Cave: Button widget name:", browseWidget?.name);
                             
                             console.log("🐻 Bear Cave: Browse button added successfully");
                             console.log("🐻 Bear Cave: Total widgets now:", this.widgets.length);
