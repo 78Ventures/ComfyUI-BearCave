@@ -19,7 +19,7 @@ class BC_LORA_DEFINE:
             "required": {
                 "project_name": ("STRING", {"default": "my_lora_project"}),
                 "subject_name": ("STRING", {"default": "subject"}),
-                "project_base_path": ("STRING", {"default": "", "placeholder": "Double-click to browse for project folder..."}),
+                "project_base_path": ("STRING", {"default": "", "image_upload": True}),
                 "trigger_words": ("STRING", {"default": ""}),
                 "base_model": (["sd15", "sd21", "sdxl", "custom"], {"default": "sd15"}),
                 "performance_mode": (["fast", "balanced", "quality"], {"default": "balanced"}),
