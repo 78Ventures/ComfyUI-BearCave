@@ -44,6 +44,12 @@ app.registerExtension({
                             });
                             
                             console.log("🐻 Bear Cave: Browse button added successfully");
+                            console.log("🐻 Bear Cave: Total widgets now:", this.widgets.length);
+                            console.log("🐻 Bear Cave: Widget names:", this.widgets.map(w => w.name));
+                            
+                            // Force UI refresh
+                            this.setDirtyCanvas(true, true);
+                            this.size = this.computeSize();
                         }
                     } else {
                         console.log("🐻 Bear Cave: Still waiting for FileFolderAPI... Checked app.FileFolderAPI:", !!app.FileFolderAPI, "window.FileFolderAPI:", !!window.FileFolderAPI);
