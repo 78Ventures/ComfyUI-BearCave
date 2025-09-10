@@ -21,32 +21,37 @@ app.registerExtension({
                 
                 console.log("🐻 Bear Cave: BC_LORA_DEFINE node created");
                 console.log("🐻 Bear Cave: Available widgets:", this.widgets?.map(w => w.name));
+                console.log("🐻 Bear Cave: app object keys:", Object.keys(app));
                 console.log("🐻 Bear Cave: FileFolderAPI available:", !!app.FileFolderAPI);
+                console.log("🐻 Bear Cave: window.FileFolderAPI available:", !!window.FileFolderAPI);
+                console.log("🐻 Bear Cave: Looking for API in different locations...");
                 
-                // Wait a bit for all widgets to be created
-                setTimeout(() => {
-                    const projectPathWidget = this.widgets.find(w => w.name === "project_base_path");
-                    if (projectPathWidget) {
-                        console.log("🐻 Bear Cave: Found project_base_path widget, adding browse button");
-                        
-                        // Add a browse button using FileBrowserAPI
-                        this.addWidget("button", "📁 Set Project Path", null, () => {
-                            console.log("🐻 Bear Cave: Browse button clicked");
-                            if (app.FileFolderAPI) {
-                                console.log("🐻 Bear Cave: Opening folder browser via FileBrowserAPI");
-                                app.FileFolderAPI.open(projectPathWidget, 'folder');
-                            } else {
-                                console.error("🐻 Bear Cave: FileBrowserAPI not available");
-                                alert("FileBrowserAPI not found. Please make sure ComfyUI-FileBrowserAPI extension is installed and loaded.");
-                            }
-                        });
-                        
-                        console.log("🐻 Bear Cave: Browse button added successfully");
+                // Wait for FileBrowserAPI to be available
+                const waitForAPI = () => {
+                    // Check multiple possible locations for the API
+                    const api = app.FileFolderAPI || window.FileFolderAPI || window.app?.FileFolderAPI;
+                    
+                    if (api) {
+                        console.log("🐻 Bear Cave: FileFolderAPI found!", api);
+                        const projectPathWidget = this.widgets.find(w => w.name === "project_base_path");
+                        if (projectPathWidget) {
+                            console.log("🐻 Bear Cave: Found project_base_path widget, adding browse button");
+                            
+                            // Add a browse button using FileBrowserAPI
+                            this.addWidget("button", "📁 Set Project Path", null, () => {
+                                console.log("🐻 Bear Cave: Browse button clicked");
+                                api.open(projectPathWidget, 'folder');
+                            });
+                            
+                            console.log("🐻 Bear Cave: Browse button added successfully");
+                        }
                     } else {
-                        console.error("🐻 Bear Cave: project_base_path widget not found");
-                        console.error("🐻 Bear Cave: Available widgets:", this.widgets?.map(w => w.name));
+                        console.log("🐻 Bear Cave: Still waiting for FileFolderAPI... Checked app.FileFolderAPI:", !!app.FileFolderAPI, "window.FileFolderAPI:", !!window.FileFolderAPI);
+                        setTimeout(waitForAPI, 1000);
                     }
-                }, 100);
+                };
+                
+                setTimeout(waitForAPI, 100);
                 
                 return result;
             };
