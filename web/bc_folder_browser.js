@@ -1,89 +1,70 @@
 /**
  * Simple folder browser for BC_LORA_DEFINE project_base_path
- * Adds a browse button next to the text field
+ * Adds double-click handler to open folder picker
  */
 
 import { app } from "../../scripts/app.js";
 
-console.log("🐻 Bear Cave: Loading folder browser extension...");
+console.log("🐻 Bear Cave: Loading folder browser extension v3...");
 
 app.registerExtension({
     name: "BearCave.FolderBrowser",
     
     beforeRegisterNodeDef(nodeType, nodeData) {
         if (nodeData.name === "BC_LORA_DEFINE") {
-            console.log("🐻 Bear Cave: Adding folder browser to BC_LORA_DEFINE");
+            console.log("🐻 Bear Cave: Processing BC_LORA_DEFINE node");
             
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function() {
                 const result = onNodeCreated?.apply(this, arguments);
                 
-                // Find the project_base_path widget and add a button next to it
-                setTimeout(() => {
-                    for (const widget of this.widgets || []) {
-                        if (widget.name === "project_base_path") {
-                            console.log("🐻 Bear Cave: Found project_base_path widget");
-                            
-                            // Create browse button
-                            const browseBtn = document.createElement('button');
-                            browseBtn.textContent = '📁';
-                            browseBtn.style.cssText = `
-                                position: absolute;
-                                right: 5px;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                width: 25px;
-                                height: 20px;
-                                border: 1px solid #555;
-                                background: #333;
-                                color: white;
-                                cursor: pointer;
-                                font-size: 12px;
-                                z-index: 1000;
-                            `;
-                            
-                            browseBtn.onclick = async (e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
+                console.log("🐻 Bear Cave: BC_LORA_DEFINE node created, widgets:", this.widgets?.map(w => w.name));
+                
+                // Add double-click handler to project_base_path widget
+                for (const widget of this.widgets || []) {
+                    if (widget.name === "project_base_path") {
+                        console.log("🐻 Bear Cave: Found project_base_path widget, adding handler");
+                        
+                        const originalCallback = widget.callback;
+                        let lastClickTime = 0;
+                        
+                        widget.callback = function(...args) {
+                            const now = Date.now();
+                            if (now - lastClickTime < 300) {
+                                // Double click detected
+                                console.log("🐻 Bear Cave: Double-click detected, opening folder browser");
                                 
-                                // Use the File System Access API if available
                                 if ('showDirectoryPicker' in window) {
-                                    try {
-                                        const dirHandle = await window.showDirectoryPicker();
-                                        // Get the folder name (browsers can't give full paths for security)
-                                        widget.value = dirHandle.name;
-                                        this.setDirtyCanvas(true, false);
-                                    } catch (err) {
-                                        if (err.name !== 'AbortError') {
-                                            // Fallback to text input
-                                            const path = prompt('Enter folder path:', widget.value || '');
-                                            if (path !== null) {
-                                                widget.value = path;
-                                                this.setDirtyCanvas(true, false);
-                                            }
+                                    window.showDirectoryPicker().then(dirHandle => {
+                                        const path = prompt('Enter full folder path (browser only shows folder name):', dirHandle.name);
+                                        if (path) {
+                                            widget.value = path;
+                                            if (originalCallback) originalCallback.apply(this, args);
                                         }
-                                    }
+                                    }).catch(err => {
+                                        if (err.name !== 'AbortError') {
+                                            console.log('Folder picker cancelled or failed');
+                                        }
+                                    });
                                 } else {
-                                    // Fallback for browsers that don't support the API
                                     const path = prompt('Enter folder path:', widget.value || '');
                                     if (path !== null) {
                                         widget.value = path;
-                                        this.setDirtyCanvas(true, false);
+                                        if (originalCallback) originalCallback.apply(this, args);
                                     }
                                 }
-                            };
-                            
-                            // Add button to the widget's DOM element
-                            if (widget.element) {
-                                widget.element.style.position = 'relative';
-                                widget.element.appendChild(browseBtn);
                             }
+                            lastClickTime = now;
                             
-                            console.log("🐻 Bear Cave: Folder browser button added");
-                            break;
-                        }
+                            if (originalCallback) {
+                                return originalCallback.apply(this, args);
+                            }
+                        };
+                        
+                        console.log("🐻 Bear Cave: Double-click handler added to project_base_path");
+                        break;
                     }
-                }, 100);
+                }
                 
                 return result;
             };
@@ -91,4 +72,4 @@ app.registerExtension({
     }
 });
 
-console.log("🐻 Bear Cave: Folder browser extension loaded");
+console.log("🐻 Bear Cave: Folder browser extension loaded v3");
