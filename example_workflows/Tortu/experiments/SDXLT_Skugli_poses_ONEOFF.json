@@ -1,0 +1,716 @@
+{
+  "id": "merged-sdxl-poses",
+  "last_node_id": 200,
+  "last_link_id": 20,
+  "nodes": [
+    {
+      "id": 20,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -40,
+        -430
+      ],
+      "size": [
+        343.7,
+        98.0
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            5
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 1,
+          "links": [
+            1,
+            2
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 2,
+          "links": [
+            17
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59"
+      },
+      "widgets_values": [
+        "sd_xl_base_1.0.safetensors"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [
+        -10,
+        -150
+      ],
+      "size": [
+        315,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59"
+      },
+      "widgets_values": [
+        1032,
+        1704,
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        370,
+        -170
+      ],
+      "size": [
+        422.85,
+        164.31
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59"
+      },
+      "widgets_values": [
+        "DwarfPosePrompt = \"In the foreground, a dwarven barbarian leaps into frame, axe raised behind his head in both hands. His knees are bent, legs tucked midair, body twisting upward with force. He wears aged copper armor with green verdigris patina and a full helmet. His red beard streams behind him.\"\n\nMonsterPosePrompt = \"Midair across from him, a massive four-armed albino gorilla-like beast (Girallon) leaps forward in rage. Its two main arms are raised to strike, while two smaller secondary arms hang from its lower torso, twisted and slack with green ooze. A long tail whips behind it.\"\n\nScenePrompt = \"The two figures are suspended above a broken stone road through a jungle clearing, with dappled sunlight filtering through the canopy. Vines, trees, and mossy stones frame the background.\"\n\nCompositionPrompt = \"The scene is viewed over the dwarf's shoulder, framing the monster in front of him. The moment is frozen just before impact. No blood or wounds \u2014 only cinematic tension and motion.\"\n\nVisualStylePrompt = \"A traditional-style fantasy illustration in a realistic painterly aesthetic. Strong character silhouettes, bold lighting, and hand-painted texture detail reminiscent of storybook or concept art. Colors are rich but muted, using warm shadows and atmospheric depth. Linework is minimal or fully blended. The composition evokes dynamic movement and cinematic framing. Ideal for print or digital publication.\"\n\nLightingStylePrompt = \"Dynamic lighting with sharp highlights and deep shadows. Rim lighting on the figures, atmospheric jungle light shafts, and a theatrical backlight create drama. No ambient glow or haze.\"\n\nColorTreatmentPrompt = \"Richly saturated but natural colors, with vivid reds and greens contrasting against cool shadows and warm earth tones. No neon or oversaturated elements.\"\n\nFullPrompt = PoseReferenceLegend + DwarfPosePrompt + MonsterPosePrompt + ScenePrompt + CompositionPrompt + VisualStylePrompt + LightingStylePrompt + ColorTreatmentPrompt \n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [
+        370,
+        50
+      ],
+      "size": [
+        425.28,
+        180.61
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59"
+      },
+      "widgets_values": [
+        "\n=== Anatomy Suppression ===\nbad anatomy, missing limbs, extra limbs, fused arms, broken bones, malformed, poor proportions, unrealistic muscle, disconnected limbs, duplicate limbs\n\n=== Visual Clarity / Shape Errors ===\nblurry, soft focus, floating objects, indistinct shapes, occluded faces, bad perspective, low contrast, bad silhouette, messy composition\n\n=== Lighting & Glow Suppression ===\nambient glow, green glow, soft glow, glowing fog, radioactive haze, neon lighting, light bloom, overexposed lighting, bloom lighting, washed out\n\n=== Style Mismatches ===\ncomic style, 3d render, cg artifact, cheap texture, toy-like design, lowpoly, photobashing, sketch overlay, grayscale\n\n=== Content Violations ===\nblood, gore, injury, dismemberment, body horror, open wounds, exposed flesh, horror elements\n\n=== Artifact Suppression ===\nwatermark, signature, text artifact, frame border, glitch\n"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 70,
+      "type": "LoadImage",
+      "pos": [
+        -40,
+        180
+      ],
+      "size": [
+        220,
+        46
+      ],
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            7
+          ]
+        }
+      ],
+      "widgets_values": [
+        "/mnt/data/BATCH_01/Subject1.png"
+      ],
+      "title": "Subject 1 Pose (OpenPose)"
+    },
+    {
+      "id": 71,
+      "type": "OpenPosePreprocessor",
+      "pos": [
+        160,
+        180
+      ],
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "type": "ControlNetLoader",
+      "pos": [
+        360,
+        180
+      ],
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONTROL_NET",
+          "type": "CONTROL_NET",
+          "slot_index": 0,
+          "links": [
+            9
+          ]
+        }
+      ],
+      "widgets_values": [
+        "control_v11p_sd15_openpose.pth",
+        1.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "id": 73,
+      "type": "LoadImage",
+      "pos": [
+        -40,
+        360
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            10
+          ]
+        }
+      ],
+      "widgets_values": [
+        "/mnt/data/BATCH_01/Subject2.png"
+      ],
+      "title": "Subject 2 Pose (OpenPose)"
+    },
+    {
+      "id": 74,
+      "type": "OpenPosePreprocessor",
+      "pos": [
+        160,
+        360
+      ],
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            11
+          ]
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "type": "ControlNetLoader",
+      "pos": [
+        360,
+        360
+      ],
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONTROL_NET",
+          "type": "CONTROL_NET",
+          "slot_index": 0,
+          "links": [
+            12
+          ]
+        }
+      ],
+      "widgets_values": [
+        "control_v11p_sd15_openpose.pth",
+        1.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "id": 76,
+      "type": "LoadImage",
+      "pos": [
+        -40,
+        540
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            13
+          ]
+        }
+      ],
+      "widgets_values": [
+        "/mnt/data/BATCH_01/Composite.png"
+      ],
+      "title": "Composite Depth Ref"
+    },
+    {
+      "id": 77,
+      "type": "LeReS-DepthMapPreprocessor",
+      "pos": [
+        160,
+        540
+      ],
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "type": "ControlNetLoader",
+      "pos": [
+        360,
+        540
+      ],
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONTROL_NET",
+          "type": "CONTROL_NET",
+          "slot_index": 0,
+          "links": [
+            15
+          ]
+        }
+      ],
+      "widgets_values": [
+        "control_v11f1p_sd15_depth.pth",
+        0.65,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "id": 100,
+      "type": "KSampler",
+      "pos": [
+        820,
+        -430
+      ],
+      "size": [
+        360,
+        230
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": null
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "control",
+          "type": "CONTROL_NET",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            16
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59"
+      },
+      "widgets_values": {
+        "seed": 123456,
+        "steps": 28,
+        "cfg": 7.0,
+        "sampler_name": "dpmpp_2m_karras",
+        "scheduler": "karras",
+        "denoise": 0.76
+      }
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        1240,
+        -390
+      ],
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            18,
+            19
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "type": "PreviewImage",
+      "pos": [
+        1240,
+        -120
+      ],
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": null
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "type": "SaveImage",
+      "pos": [
+        1540,
+        -120
+      ],
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "widgets_values": [
+        "Skugli"
+      ]
+    },
+    {
+      "id": 201,
+      "type": "Note",
+      "pos": [
+        -300,
+        600
+      ],
+      "size": [
+        520,
+        180
+      ],
+      "widgets_values": [
+        "Folder schema for batching (one scene per folder):\n/mnt/data/BATCH_01/\n  \u251c\u2500 Subject1.png\n  \u251c\u2500 Subject2.png\n  \u251c\u2500 Composite.png\n  \u251c\u2500 positive_prompts.txt\n  \u2514\u2500 negative_prompts.txt\n\nTip: Use Wildcards or Text-from-File nodes to feed those .txt files into CLIP encoders.\n"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      20,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      2,
+      20,
+      1,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      6,
+      0,
+      100,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      4,
+      7,
+      0,
+      100,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      5,
+      20,
+      0,
+      100,
+      0,
+      "MODEL"
+    ],
+    [
+      6,
+      5,
+      0,
+      100,
+      3,
+      "LATENT"
+    ],
+    [
+      7,
+      70,
+      0,
+      71,
+      0,
+      "IMAGE"
+    ],
+    [
+      8,
+      71,
+      0,
+      72,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      72,
+      0,
+      100,
+      4,
+      "CONTROL_NET"
+    ],
+    [
+      10,
+      73,
+      0,
+      74,
+      0,
+      "IMAGE"
+    ],
+    [
+      11,
+      74,
+      0,
+      75,
+      0,
+      "IMAGE"
+    ],
+    [
+      12,
+      75,
+      0,
+      100,
+      4,
+      "CONTROL_NET"
+    ],
+    [
+      13,
+      76,
+      0,
+      77,
+      0,
+      "IMAGE"
+    ],
+    [
+      14,
+      77,
+      0,
+      78,
+      0,
+      "IMAGE"
+    ],
+    [
+      15,
+      78,
+      0,
+      100,
+      4,
+      "CONTROL_NET"
+    ],
+    [
+      16,
+      100,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      17,
+      20,
+      2,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      18,
+      8,
+      0,
+      25,
+      0,
+      "IMAGE"
+    ],
+    [
+      19,
+      8,
+      0,
+      27,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "frontendVersion": "1.25.11"
+  },
+  "version": 0.4
+}

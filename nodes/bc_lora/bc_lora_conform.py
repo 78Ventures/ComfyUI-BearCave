@@ -39,40 +39,40 @@ class BC_IMAGE_LORA_CONFORM:
 
     RETURN_TYPES = (
         "IMAGE",     # Processed image
-        "STRING",    # Filename (pass-through)
-        "STRING",    # Relative path (pass-through)
-        "INT",       # Final width
-        "INT",       # Final height
-        "FLOAT",     # Scale factor applied
-        "STRING",    # Processing method used
-        "BOOLEAN",   # Was upscaled
-        "BOOLEAN",   # Was cropped
         "STRING",    # Crop coordinates (JSON)
-        "STRING",    # Processing log
-        "STRING",    # Face pose (pass-through)
         "FLOAT",     # Detection confidence (pass-through)
         "BOOLEAN",   # Face detected (pass-through)
+        "STRING",    # Face pose (pass-through)
+        "STRING",    # Filename (pass-through)
+        "INT",       # Final height
+        "STRING",    # Processing method used
+        "STRING",    # Processing log
+        "STRING",    # Relative path (pass-through)
+        "FLOAT",     # Scale factor applied
+        "BOOLEAN",   # Was cropped
+        "BOOLEAN",   # Was upscaled
+        "INT",       # Final width
     )
     
     RETURN_NAMES = (
         "image_batch",
-        "filename",
-        "relative_path", 
-        "width",
-        "height",
-        "scale_factor",
-        "method_used",
-        "was_upscaled",
-        "was_cropped",
         "crop_info",
-        "process_log",
-        "face_pose",
         "detection_confidence",
-        "face_detected"
+        "face_detected",
+        "face_pose",
+        "filename",
+        "height",
+        "method_used",
+        "process_log",
+        "relative_path",
+        "scale_factor",
+        "was_cropped",
+        "was_upscaled",
+        "width"
     )
     
     FUNCTION = "crop_and_resize"
-    CATEGORY = "🐻 Bear Cave/LoRa"
+    CATEGORY = "🐢 TORTU/LoRa"
 
     def crop_and_resize(self, image_batch, size, resize_method, crop_method, **kwargs):
         import json
@@ -197,7 +197,7 @@ class BC_IMAGE_LORA_CONFORM:
             )
             
         except Exception as e:
-            print(f"🐻 Bear Cave: Error in BearImageLoRAConform: {e}")
+            print(f"🐢 TORTU: Error in BearImageLoRAConform: {e}")
             return (
                 image_batch, filename, relative_path,
                 0, 0, 1.0, "error", False, False, '{"error": true}',
@@ -302,5 +302,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BC_IMAGE_LORA_CONFORM": "🐻 Conform for LoRA"
+    "BC_IMAGE_LORA_CONFORM": "🐢 Conform for LoRA"
 }

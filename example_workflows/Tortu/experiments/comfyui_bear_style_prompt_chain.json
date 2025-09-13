@@ -1,0 +1,62 @@
+{
+    "nodes": [
+        {
+            "id": 1,
+            "type": "LoadTextFile",
+            "inputs": {
+                "filename": "/mnt/data/ComfyUI_BearCave/library/styles/wayne_reynolds.txt"
+            },
+            "position": [
+                0,
+                0
+            ],
+            "outputs": [
+                "STRING"
+            ]
+        },
+        {
+            "id": 2,
+            "type": "StringInput",
+            "inputs": {
+                "text": "A feline jungle warrior poised on a twisted tree branch, ready to strike with a ceremonial axe"
+            },
+            "position": [
+                0,
+                150
+            ],
+            "outputs": [
+                "STRING"
+            ]
+        },
+        {
+            "id": 3,
+            "type": "StringJoin",
+            "inputs": {
+                "text_a": 1,
+                "text_b": 2,
+                "delimiter": ", "
+            },
+            "position": [
+                250,
+                75
+            ],
+            "outputs": [
+                "STRING"
+            ]
+        },
+        {
+            "id": 4,
+            "type": "CLIPTextEncode",
+            "inputs": {
+                "text": 3
+            },
+            "position": [
+                500,
+                75
+            ],
+            "outputs": [
+                "CONDITION"
+            ]
+        }
+    ]
+}

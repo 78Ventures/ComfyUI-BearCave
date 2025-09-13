@@ -1,5 +1,5 @@
 # install.py
-# Pinokio-compatible auto-installer for Bear Cave nodes
+# Pinokio-compatible auto-installer for TORTU nodes
 ############################
 import subprocess
 import sys
@@ -96,7 +96,7 @@ def get_system_info():
 
 def install_requirements():
     """Smart installer for Pinokio environments"""
-    print("🐻 Bear Cave Nodes - Pinokio Environment Installer")
+    print("🐢 TORTU Nodes - Pinokio Environment Installer")
     print("=" * 65)
     
     # System info
@@ -153,15 +153,15 @@ def install_requirements():
     
     if success_count == len(requirements):
         print("🎉 All dependencies installed successfully!")
-        print("Restart ComfyUI in Pinokio to use Bear Cave nodes.")
+        print("Restart ComfyUI in Pinokio to use TORTU nodes.")
     elif success_count > 0:
         print(f"⚠️  Partial success: {success_count}/{len(requirements)} dependencies installed")
-        print("Some Bear Cave nodes may not work properly.")
+        print("Some TORTU nodes may not work properly.")
     else:
         print("❌ Installation failed. Manual steps:")
         print(f"1. Open terminal in Pinokio")
         print(f"2. Try: {python_exe} -m pip install mediapipe opencv-python")
-        print("3. Or contact Bear Cave support with the above system info")
+        print("3. Or contact TORTU support with the above system info")
     
     return success_count == len(requirements)
 
@@ -173,7 +173,7 @@ def auto_install_check():
         import cv2
         return True  # All good
     except ImportError:
-        print("🐻 Bear Cave: Missing dependencies detected, attempting auto-install...")
+        print("🐢 TORTU: Missing dependencies detected, attempting auto-install...")
         return install_requirements()
 
 if __name__ == "__main__":

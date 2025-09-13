@@ -1,8 +1,8 @@
-# ComfyUI BearCave
+# ComfyUI TORTU
 
 Opinionated custom nodes and ready-to-use workflows for dataset prep and portrait/headshot pipelines in **ComfyUI**.
 
-- **Repo:** https://github.com/78Ventures/ComfyUI-BearCave
+- **Repo:** https://github.com/78Ventures/ComfyUI-TORTU
 - **Status:** Alpha — APIs may change
 - **License:** MIT (see [LICENSE](LICENSE))
 

@@ -36,14 +36,14 @@ class BC_EXIF_WRITER:
                 "creation_date": ("STRING", {"forceInput": True}),
                 "face_pose": ("STRING", {"forceInput": True}),  # From detection
                 # Additional metadata
-                "age": ("STRING", {"default": ""}),
-                "gender": ("STRING", {"default": ""}),
-                "ethnicity": ("STRING", {"default": ""}),
-                "lighting": ("STRING", {"default": ""}),
-                "background": ("STRING", {"default": ""}),
-                "camera_angle": ("STRING", {"default": ""}),
+                "age": ("STRING", {"default": "", "forceInput": True}),
+                "gender": ("STRING", {"default": "", "forceInput": True}),
+                "ethnicity": ("STRING", {"default": "", "forceInput": True}),
+                "lighting": ("STRING", {"default": "", "forceInput": True}),
+                "background": ("STRING", {"default": "", "forceInput": True}),
+                "camera_angle": ("STRING", {"default": "", "forceInput": True}),
                 "quality_rating": ("INT", {"default": 0, "min": 0, "max": 10}),
-                "tags": ("STRING", {"default": ""}),
+                "tags": ("STRING", {"default": "", "forceInput": True}),
                 "dataset_name": ("STRING", {"default": ""}),
                 "training_weight": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
             }
@@ -51,28 +51,28 @@ class BC_EXIF_WRITER:
 
     RETURN_TYPES = (
         "STRING",    # File path
-        "STRING",    # Filename
-        "STRING",    # Metadata JSON
-        "STRING",    # Tags list
-        "STRING",    # Full metadata string
-        "BOOLEAN",   # Save successful
         "INT",       # File size
+        "STRING",    # Filename
+        "STRING",    # Full metadata string
+        "STRING",    # Metadata JSON
+        "BOOLEAN",   # Save successful
         "STRING",    # Save timestamp
+        "STRING",    # Tags list
     )
     
     RETURN_NAMES = (
         "file_path",
-        "filename", 
-        "metadata_json",
-        "tags",
-        "full_metadata",
-        "save_successful",
         "file_size",
-        "save_timestamp"
+        "filename",
+        "full_metadata",
+        "metadata_json",
+        "save_successful",
+        "save_timestamp",
+        "tags"
     )
     
     FUNCTION = "write"
-    CATEGORY = "🐻 Bear Cave/EXIF"
+    CATEGORY = "🐢 TORTU/EXIF"
     OUTPUT_NODE = True
 
     def write(self, image_batch, expression, pose, note, subject, output_dir, **kwargs):
@@ -172,7 +172,7 @@ class BC_EXIF_WRITER:
                 
                 # Processing info
                 "processed_timestamp": save_timestamp,
-                "processed_by": "Bear Cave EXIF Writer",
+                "processed_by": "TORTU EXIF Writer",
                 "processing_version": "1.0"
             }
 
@@ -185,7 +185,7 @@ class BC_EXIF_WRITER:
                     meta.add_text(key.title().replace("_", " "), str(value))
             
             # Add JSON metadata
-            meta.add_text("BearCave_Metadata_JSON", json.dumps(metadata, indent=2))
+            meta.add_text("TORTU_Metadata_JSON", json.dumps(metadata, indent=2))
             
             # Create tags string
             tags_list = []
@@ -208,7 +208,7 @@ class BC_EXIF_WRITER:
             # Create full metadata string for output
             full_metadata_string = "\n".join([f"{k}: {v}" for k, v in metadata.items() if v])
             
-            print(f"🐻 Bear Cave: Saved image with comprehensive EXIF: {full_save_path}")
+            print(f"🐢 TORTU: Saved image with comprehensive EXIF: {full_save_path}")
             
             return (
                 str(full_save_path),
@@ -222,7 +222,7 @@ class BC_EXIF_WRITER:
             )
             
         except Exception as e:
-            print(f"🐻 Bear Cave: Error in BearExifWriter: {e}")
+            print(f"🐢 TORTU: Error in BearExifWriter: {e}")
             return ("error", "error", "{}", "", str(e), False, 0, "")
 
 # Node registration
@@ -231,5 +231,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BC_EXIF_WRITER": "🐻 Write EXIF Data"
+    "BC_EXIF_WRITER": "🐢 Write EXIF Data"
 }

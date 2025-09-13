@@ -156,7 +156,7 @@ class KohyaWrapper:
             if not image_files:
                 return False, f"No training images found in: {train_dir}"
             
-            print(f"🐻 Bear Cave LoRa: Found {len(image_files)} training images")
+            print(f"🐢 TORTU LoRa: Found {len(image_files)} training images")
             return True, f"Training environment prepared successfully"
             
         except Exception as e:
@@ -206,7 +206,7 @@ class KohyaWrapper:
             # Build command - using python -m to run kohya-ss
             cmd = [sys.executable, "-m", "kohya_ss.train_network"] + args
             
-            print(f"🐻 Bear Cave LoRa: Starting training with command:")
+            print(f"🐢 TORTU LoRa: Starting training with command:")
             print(f"  {' '.join(cmd)}")
             
             # Start process
@@ -223,7 +223,7 @@ class KohyaWrapper:
             # Monitor output
             for line in iter(self.process.stdout.readline, ''):
                 if line:
-                    print(f"🐻 Kohya: {line.strip()}")
+                    print(f"🐢 Kohya: {line.strip()}")
                     
                     # Parse progress
                     updates = self.monitor.parse_training_output(line)
@@ -233,23 +233,23 @@ class KohyaWrapper:
                         try:
                             self.monitor.progress_callback(self.monitor.get_status_summary())
                         except Exception as e:
-                            print(f"🐻 Bear Cave LoRa: Progress callback error: {e}")
+                            print(f"🐢 TORTU LoRa: Progress callback error: {e}")
             
             # Wait for process to complete
             return_code = self.process.wait()
             
             if return_code == 0:
                 self.monitor.status = "completed"
-                print("🐻 Bear Cave LoRa: Training completed successfully!")
+                print("🐢 TORTU LoRa: Training completed successfully!")
             else:
                 self.monitor.status = "error"
                 self.monitor.error_message = f"Training failed with return code: {return_code}"
-                print(f"🐻 Bear Cave LoRa: Training failed with return code: {return_code}")
+                print(f"🐢 TORTU LoRa: Training failed with return code: {return_code}")
             
         except Exception as e:
             self.monitor.status = "error"
             self.monitor.error_message = str(e)
-            print(f"🐻 Bear Cave LoRa: Training process error: {e}")
+            print(f"🐢 TORTU LoRa: Training process error: {e}")
         
         finally:
             self.monitor.is_running = False
@@ -306,5 +306,5 @@ class KohyaWrapper:
             return [str(f) for f in model_files]
             
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Error finding output models: {e}")
+            print(f"🐢 TORTU LoRa: Error finding output models: {e}")
             return []

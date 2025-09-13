@@ -43,38 +43,38 @@ class BC_DETECT_FACE_ORIENTATION:
 
     RETURN_TYPES = (
         "IMAGE",     # Pass-through image
-        "STRING",    # Face pose
         "FLOAT",     # Detection confidence
-        "INT",       # Number of faces detected
-        "BOOLEAN",   # Face detected
-        "STRING",    # Detection status
+        "STRING",    # Detailed results JSON
         "FLOAT",     # Face center X
         "FLOAT",     # Face center Y
-        "FLOAT",     # Face width
+        "INT",       # Number of faces detected
+        "BOOLEAN",   # Face detected
         "FLOAT",     # Face height
-        "STRING",    # Detailed results JSON
+        "STRING",    # Face pose
+        "FLOAT",     # Face width
         "STRING",    # Filename (pass-through)
         "STRING",    # Relative path (pass-through)
+        "STRING",    # Detection status
     )
     
     RETURN_NAMES = (
         "image_batch",
-        "face_pose",
         "confidence",
+        "detection_data",
+        "face_center_x",
+        "face_center_y",
         "face_count",
         "face_detected",
-        "status",
-        "face_center_x",
-        "face_center_y", 
-        "face_width",
         "face_height",
-        "detection_data",
+        "face_pose",
+        "face_width",
         "filename",
-        "relative_path"
+        "relative_path",
+        "status"
     )
     
     FUNCTION = "detect_face_orientation"
-    CATEGORY = "🐻 Bear Cave/Detection"
+    CATEGORY = "🐢 TORTU/Detection"
 
     def detect_face_orientation(self, image_batch, **kwargs):
         import json
@@ -217,7 +217,7 @@ class BC_DETECT_FACE_ORIENTATION:
                     }
 
         except Exception as e:
-            print(f"🐻 Bear Cave: Error in face detection: {e}")
+            print(f"🐢 TORTU: Error in face detection: {e}")
             return (
                 image_batch, "error", 0.0, 0, False, f"Detection error: {str(e)}",
                 0.0, 0.0, 0.0, 0.0, f'{{"error": "{str(e)}"}}', filename, relative_path
@@ -235,5 +235,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BC_DETECT_FACE_ORIENTATION": "🐻 Face Orientation",
+    "BC_DETECT_FACE_ORIENTATION": "🐢 Face Orientation",
 }

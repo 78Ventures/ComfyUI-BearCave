@@ -42,24 +42,24 @@ class BC_LORA_METADATA:
 
     RETURN_TYPES = (
         "STRING",    # Caption files created count
+        "STRING",    # Caption files list (JSON)
         "STRING",    # Metadata JSON
         "STRING",    # Processing log
-        "BOOLEAN",   # Success status
         "STRING",    # Status message
-        "STRING",    # Caption files list (JSON)
+        "BOOLEAN",   # Success status
     )
     
     RETURN_NAMES = (
         "caption_count",
+        "caption_files",
         "metadata_json",
         "processing_log",
-        "success",
         "status_message",
-        "caption_files"
+        "success"
     )
     
     FUNCTION = "generate_captions"
-    CATEGORY = "🐻 Bear Cave/LoRa"
+    CATEGORY = "🐢 TORTU/LoRa"
 
     def generate_captions(self, conform_path, trigger_words, base_caption, caption_style, **kwargs):
         try:
@@ -157,7 +157,7 @@ class BC_LORA_METADATA:
             )
             
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Error in generate_captions: {e}")
+            print(f"🐢 TORTU LoRa: Error in generate_captions: {e}")
             return self._error_return(f"Caption generation failed: {str(e)}")
     
     def _find_training_images(self, conform_dir: Path) -> List[str]:
@@ -192,7 +192,7 @@ class BC_LORA_METADATA:
                 try:
                     backup_file.write_text(caption_file.read_text(encoding='utf-8'), encoding='utf-8')
                 except Exception as e:
-                    print(f"🐻 Bear Cave LoRa: Warning - could not create backup: {e}")
+                    print(f"🐢 TORTU LoRa: Warning - could not create backup: {e}")
             
             # Generate caption based on style
             caption = self._generate_caption_content(
@@ -350,5 +350,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BC_LORA_METADATA": "🐻 Generate LoRa Captions"
+    "BC_LORA_METADATA": "🐢 Generate LoRa Captions"
 }

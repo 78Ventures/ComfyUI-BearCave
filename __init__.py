@@ -1,7 +1,7 @@
 ###################################
 # __init__.py
 ###################################
-# BearCave root package entry point for ComfyUI.
+# TORTU root package entry point for ComfyUI.
 #
 # This file re-exports NODE_CLASS_MAPPINGS and NODE_DISPLAY_NAME_MAPPINGS
 # from our subpackage so ComfyUI can register the nodes.
@@ -20,5 +20,5 @@ NODE_DISPLAY_NAME_MAPPINGS = dict(_BC_NODE_DISPLAY_NAME_MAPPINGS)
 # Tell ComfyUI where to find our web extensions
 WEB_DIRECTORY = "./web"
 
-print(f"✅ BearCave: registered {len(NODE_CLASS_MAPPINGS)} nodes.")
-print(f"✅ BearCave: web directory set to {WEB_DIRECTORY}")
+print(f"✅ TORTU: registered {len(NODE_CLASS_MAPPINGS)} nodes.")
+print(f"✅ TORTU: web directory set to {WEB_DIRECTORY}")

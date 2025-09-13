@@ -1,8 +1,8 @@
 // bearcave_ui_groups.js
-// Add section headers (UI subheaders) to BearCave nodes for better organization
+// Add section headers (UI subheaders) to TORTU nodes for better organization
 
 app.registerExtension({
-    name: "BearCave.UIGroups",
+    name: "TORTU.UIGroups",
     
     async nodeCreated(node) {
         // BC_LORA_DEFINE node organization

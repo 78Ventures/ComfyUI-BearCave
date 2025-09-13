@@ -41,29 +41,43 @@ class BC_LORA_DEFINE:
         }
 
     RETURN_TYPES = (
-        "STRING",    # Project path
-        "STRING",    # Source folder path (01_source)
+        "STRING",    # Subject age
+        "STRING",    # Background type
+        "STRING",    # Camera angle
         "STRING",    # Conform folder path (02_conform)
+        "STRING",    # Subject ethnicity
+        "STRING",    # Subject gender
+        "STRING",    # Lighting conditions
         "STRING",    # Output folder path (03_output)
         "STRING",    # Project metadata JSON
-        "STRING",    # Training config JSON
+        "STRING",    # Project path
         "BOOLEAN",   # Setup successful
+        "STRING",    # Source folder path (01_source)
         "STRING",    # Status message
+        "STRING",    # Additional tags
+        "STRING",    # Training config JSON
     )
     
     RETURN_NAMES = (
-        "project_path",
-        "source_path",
+        "age",
+        "background",
+        "camera_angle",
         "conform_path",
+        "ethnicity",
+        "gender",
+        "lighting",
         "output_path",
         "project_metadata",
-        "training_config",
+        "project_path",
         "setup_successful",
-        "status_message"
+        "source_path",
+        "status_message",
+        "tags",
+        "training_config"
     )
     
     FUNCTION = "define_project"
-    CATEGORY = "🐻 Bear Cave/LoRa"
+    CATEGORY = "🐢 TORTU/LoRa"
 
     def define_project(self, project_name, subject_name, project_base_path, 
                       trigger_words, base_model, performance_mode, **kwargs):
@@ -132,18 +146,25 @@ class BC_LORA_DEFINE:
                 status_message += f" at {project_path}"
             
             return (
-                str(project_path),
-                str(source_path),
-                str(conform_path),
-                str(output_path),
-                json.dumps(project_metadata, indent=2),
-                json.dumps(training_config, indent=2),
-                True,
-                status_message
+                age,                                           # age
+                background,                                    # background
+                camera_angle,                                  # camera_angle
+                str(conform_path),                            # conform_path
+                ethnicity,                                     # ethnicity
+                gender,                                        # gender
+                lighting,                                      # lighting
+                str(output_path),                             # output_path
+                json.dumps(project_metadata, indent=2),      # project_metadata
+                str(project_path),                            # project_path
+                True,                                         # setup_successful
+                str(source_path),                             # source_path
+                status_message,                               # status_message
+                additional_tags,                              # tags
+                json.dumps(training_config, indent=2)        # training_config
             )
             
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Error in define_project: {e}")
+            print(f"🐢 TORTU LoRa: Error in define_project: {e}")
             return self._error_return(f"Project definition failed: {str(e)}")
     
     def _sanitize_filename(self, filename: str) -> str:
@@ -174,7 +195,7 @@ class BC_LORA_DEFINE:
             # Create README files
             self._create_readme_files(source_path, conform_path, output_path)
             
-            print(f"🐻 Bear Cave LoRa: Created project folders at {project_path}")
+            print(f"🐢 TORTU LoRa: Created project folders at {project_path}")
             return True, "Folders created successfully"
             
         except Exception as e:
@@ -227,7 +248,7 @@ This folder contains the final LoRa model and training outputs.
                 with open(filepath, 'w', encoding='utf-8') as f:
                     f.write(content)
             except Exception as e:
-                print(f"🐻 Bear Cave LoRa: Warning - could not create {filepath}: {e}")
+                print(f"🐢 TORTU LoRa: Warning - could not create {filepath}: {e}")
     
     def _create_project_metadata(self, project_name: str, subject_name: str, 
                                 project_path: str, trigger_words: str, base_model: str,
@@ -313,14 +334,14 @@ This folder contains the final LoRa model and training outputs.
             with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(training_config, f, indent=2, ensure_ascii=False)
             
-            print(f"🐻 Bear Cave LoRa: Saved project files to {project_path}")
+            print(f"🐢 TORTU LoRa: Saved project files to {project_path}")
             
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Warning - could not save project files: {e}")
+            print(f"🐢 TORTU LoRa: Warning - could not save project files: {e}")
     
     def _error_return(self, message: str):
         """Return error state"""
-        return ("", "", "", "", "{}", "{}", False, message)
+        return ("", "", "", "", "", "", "", "", "{}", "", False, "", message, "", "{}")
 
 # Node registration
 NODE_CLASS_MAPPINGS = {
@@ -328,5 +349,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BC_LORA_DEFINE": "🐻 Define LoRa Project"
+    "BC_LORA_DEFINE": "🐢 Define LoRa Project"
 }

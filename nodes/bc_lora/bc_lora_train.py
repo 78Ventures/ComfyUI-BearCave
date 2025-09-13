@@ -53,7 +53,7 @@ class BC_LORA_TRAIN:
             return None
             
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Error finding ComfyUI models path: {e}")
+            print(f"🐢 TORTU LoRa: Error finding ComfyUI models path: {e}")
             return None
     
     @staticmethod
@@ -90,12 +90,12 @@ class BC_LORA_TRAIN:
             result["destination"] = destination
             result["message"] = f"LoRa copied to ComfyUI: {lora_filename}"
             
-            print(f"🐻 Bear Cave LoRa: Successfully copied {lora_filename} to ComfyUI models directory")
+            print(f"🐢 TORTU LoRa: Successfully copied {lora_filename} to ComfyUI models directory")
             
         except Exception as e:
             result["error"] = str(e)
             result["message"] = f"Failed to copy LoRa to ComfyUI: {e}"
-            print(f"🐻 Bear Cave LoRa: Error copying to ComfyUI: {e}")
+            print(f"🐢 TORTU LoRa: Error copying to ComfyUI: {e}")
         
         return result
     
@@ -126,33 +126,33 @@ class BC_LORA_TRAIN:
         }
 
     RETURN_TYPES = (
-        "STRING",    # Training status
-        "STRING",    # Progress percentage
-        "STRING",    # Current epoch info
-        "STRING",    # Training metrics (JSON)
-        "STRING",    # Model output path
-        "STRING",    # Training log
-        "BOOLEAN",   # Training active
-        "STRING",    # Status message
-        "STRING",    # Training results (JSON)
         "STRING",    # ComfyUI copy status (JSON)
+        "STRING",    # Current epoch info
+        "STRING",    # Model output path
+        "STRING",    # Progress percentage
+        "STRING",    # Status message
+        "BOOLEAN",   # Training active
+        "STRING",    # Training log
+        "STRING",    # Training metrics (JSON)
+        "STRING",    # Training results (JSON)
+        "STRING",    # Training status
     )
     
     RETURN_NAMES = (
-        "training_status",
-        "progress_percentage",
+        "comfyui_copy_status",
         "epoch_info",
-        "training_metrics",
         "model_path",
-        "training_log",
-        "training_active",
+        "progress_percentage",
         "status_message",
+        "training_active",
+        "training_log",
+        "training_metrics",
         "training_results",
-        "comfyui_copy_status"
+        "training_status"
     )
     
     FUNCTION = "execute_training"
-    CATEGORY = "🐻 Bear Cave/LoRa"
+    CATEGORY = "🐢 TORTU/LoRa"
     OUTPUT_NODE = True
 
     def execute_training(self, training_config, conform_path, output_path, start_training, **kwargs):
@@ -200,7 +200,7 @@ class BC_LORA_TRAIN:
             return self._idle_return("Training ready - set 'start_training' to begin")
             
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Error in execute_training: {e}")
+            print(f"🐢 TORTU LoRa: Error in execute_training: {e}")
             return self._error_return(f"Training execution failed: {str(e)}")
     
     def _generate_training_id(self, output_path: str) -> str:
@@ -393,7 +393,7 @@ class BC_LORA_TRAIN:
                     else:
                         config[key] = value
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Warning - error parsing custom args: {e}")
+            print(f"🐢 TORTU LoRa: Warning - error parsing custom args: {e}")
         
         return config
     
@@ -415,7 +415,7 @@ class BC_LORA_TRAIN:
                     
                     training_state['log'] = training_state.get('log', '') + log_entry
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Error updating training log: {e}")
+            print(f"🐢 TORTU LoRa: Error updating training log: {e}")
     
     def _create_training_results(self, status: Dict[str, Any], model_path: str, 
                                 training_state: Dict[str, Any]) -> Dict[str, Any]:
@@ -442,7 +442,7 @@ class BC_LORA_TRAIN:
                 model_size_bytes = os.path.getsize(model_path)
                 results["model_size_mb"] = model_size_bytes / (1024 * 1024)
             except Exception as e:
-                print(f"🐻 Bear Cave LoRa: Could not get model size: {e}")
+                print(f"🐢 TORTU LoRa: Could not get model size: {e}")
         
         # Find sample images
         try:
@@ -453,7 +453,7 @@ class BC_LORA_TRAIN:
                     sample_files.extend([str(f) for f in Path(samples_dir).glob(f'*{ext}')])
                 results["sample_images"] = sorted(sample_files)
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Could not find sample images: {e}")
+            print(f"🐢 TORTU LoRa: Could not find sample images: {e}")
         
         # Copy LoRa to ComfyUI models directory
         results["comfyui_copy"] = {"copied": False, "message": "No model to copy"}
@@ -476,9 +476,9 @@ class BC_LORA_TRAIN:
                 results["comfyui_copy"] = copy_result
                 
                 if copy_result["copied"]:
-                    print(f"🐻 Bear Cave LoRa: ✅ {copy_result['message']}")
+                    print(f"🐢 TORTU LoRa: ✅ {copy_result['message']}")
                 else:
-                    print(f"🐻 Bear Cave LoRa: ⚠️ {copy_result['message']}")
+                    print(f"🐢 TORTU LoRa: ⚠️ {copy_result['message']}")
                     
             except Exception as e:
                 results["comfyui_copy"] = {
@@ -486,7 +486,7 @@ class BC_LORA_TRAIN:
                     "error": str(e),
                     "message": f"Error copying to ComfyUI: {e}"
                 }
-                print(f"🐻 Bear Cave LoRa: Error in ComfyUI copy process: {e}")
+                print(f"🐢 TORTU LoRa: Error in ComfyUI copy process: {e}")
         
         return results
     
@@ -528,5 +528,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "BC_LORA_TRAIN": "🐻 Train LoRa Model"
+    "BC_LORA_TRAIN": "🐢 Train LoRa Model"
 }

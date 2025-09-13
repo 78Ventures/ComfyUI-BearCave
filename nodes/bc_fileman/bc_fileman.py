@@ -77,22 +77,22 @@ if DEPENDENCIES_OK:
     try:
         from .IF_Load_Images_Node import IFLoadImagess
         _delegate_class = IFLoadImagess
-        print("🐻 Bear Cave: Successfully imported IFLoadImagess from IF_Load_Images_Node")
+        print("🐢 TORTU: Successfully imported IFLoadImagess from IF_Load_Images_Node")
     except ImportError as e:
-        print(f"🐻 Bear Cave: Failed to import IFLoadImagess: {e}")
+        print(f"🐢 TORTU: Failed to import IFLoadImagess: {e}")
         # Fallback: try common variations in case upstream changes
         try:
             from .IF_Load_Images_Node import IF_LoadImagess
             _delegate_class = IF_LoadImagess
-            print("🐻 Bear Cave: Successfully imported IF_LoadImagess as fallback")
+            print("🐢 TORTU: Successfully imported IF_LoadImagess as fallback")
         except ImportError as e2:
-            print(f"🐻 Bear Cave: Failed to import IF_LoadImagess: {e2}")
+            print(f"🐢 TORTU: Failed to import IF_LoadImagess: {e2}")
             try:
                 from .IF_Load_Images_Node import IFLoadImages
                 _delegate_class = IFLoadImages
-                print("🐻 Bear Cave: Successfully imported IFLoadImages as fallback")
+                print("🐢 TORTU: Successfully imported IFLoadImages as fallback")
             except ImportError as e3:
-                print(f"🐻 Bear Cave: Failed to import IFLoadImages: {e3}")
+                print(f"🐢 TORTU: Failed to import IFLoadImages: {e3}")
                 # Create a stub class if all imports fail
                 class _StubLoadImages:
                     @classmethod
@@ -102,14 +102,14 @@ if DEPENDENCIES_OK:
                     RETURN_NAMES = ("error",)
                     OUTPUT_IS_LIST = (False,)
                     FUNCTION = "error"
-                    CATEGORY = "🐻 Bear Cave/Error"
+                    CATEGORY = "🐢 TORTU/Error"
                     @classmethod
                     def IS_CHANGED(cls, *args, **kwargs):
                         return float("NaN")
                     def error(self, *args, **kwargs):
                         return ("IF_Load_Images_Node class not found. Please check the import.",)
                 _delegate_class = _StubLoadImages
-                print("🐻 Bear Cave: Using stub class for BC_LOAD_IMAGES due to import failures")
+                print("🐢 TORTU: Using stub class for BC_LOAD_IMAGES due to import failures")
 
     class BC_LOAD_IMAGES:
         def __init__(self):
@@ -164,7 +164,7 @@ if DEPENDENCIES_OK:
         RETURN_NAMES = _delegate_class.RETURN_NAMES
         OUTPUT_IS_LIST = _delegate_class.OUTPUT_IS_LIST
         FUNCTION = _delegate_class.FUNCTION
-        CATEGORY = "🐻 Bear Cave/Images"  # Override category
+        CATEGORY = "🐢 TORTU/Images"  # Override category
 
         @classmethod
         def IS_CHANGED(cls, *args, **kwargs):
@@ -179,9 +179,9 @@ if DEPENDENCIES_OK:
     ###################################
     try:
         from .IF_Load_Images_Node import ImageManager
-        print("🐻 Bear Cave: Successfully imported ImageManager from IF_Load_Images_Node")
+        print("🐢 TORTU: Successfully imported ImageManager from IF_Load_Images_Node")
     except ImportError as e:
-        print(f"🐻 Bear Cave: Failed to import ImageManager: {e}")
+        print(f"🐢 TORTU: Failed to import ImageManager: {e}")
         # Create a minimal ImageManager stub
         class ImageManager:
             @staticmethod
@@ -201,7 +201,7 @@ if DEPENDENCIES_OK:
                     return sorted(files, key=os.path.getmtime)
                 else:  # alphabetical
                     return sorted(files)
-        print("🐻 Bear Cave: Using minimal ImageManager stub")
+        print("🐢 TORTU: Using minimal ImageManager stub")
 
     class BC_SAVE_IMAGES:
         def __init__(self):
@@ -225,7 +225,7 @@ if DEPENDENCIES_OK:
         RETURN_NAMES = ("saved_path",)
         OUTPUT_IS_LIST = (True,)
         FUNCTION = "save_images"
-        CATEGORY = "🐻 Bear Cave/Images"
+        CATEGORY = "🐢 TORTU/Images"
 
         def save_images(self, image_batch, output_path="", file_prefix="image", filename_text="", file_format="png", quality=100, sort_method="numerical"):
             saved_paths = []
@@ -293,8 +293,8 @@ if DEPENDENCIES_OK:
     }
 
     NODE_DISPLAY_NAME_MAPPINGS = {
-        "BC_LOAD_IMAGES": "🐻 Load Images",
-        "BC_SAVE_IMAGES": "🐻 Save Images",
+        "BC_LOAD_IMAGES": "🐢 Load Images",
+        "BC_SAVE_IMAGES": "🐢 Save Images",
     }
 else:
     # Create placeholder stub nodes when dependencies are missing
@@ -306,7 +306,7 @@ else:
         RETURN_NAMES = ("error",)
         OUTPUT_IS_LIST = (False,)
         FUNCTION = "error"
-        CATEGORY = "🐻 Bear Cave/Error"
+        CATEGORY = "🐢 TORTU/Error"
         @classmethod
         def IS_CHANGED(cls, *args, **kwargs):
             return float("NaN")
@@ -321,7 +321,7 @@ else:
         RETURN_NAMES = ("error",)
         OUTPUT_IS_LIST = (False,)
         FUNCTION = "error"
-        CATEGORY = "🐻 Bear Cave/Error"
+        CATEGORY = "🐢 TORTU/Error"
         @classmethod
         def IS_CHANGED(cls, *args, **kwargs):
             return float("NaN")
@@ -334,6 +334,6 @@ else:
     }
 
     NODE_DISPLAY_NAME_MAPPINGS = {
-        "BC_LOAD_IMAGES": "🐻 Load Images (Missing Deps)",
-        "BC_SAVE_IMAGES": "🐻 Save Images (Missing Deps)",
+        "BC_LOAD_IMAGES": "🐢 Load Images (Missing Deps)",
+        "BC_SAVE_IMAGES": "🐢 Save Images (Missing Deps)",
     }

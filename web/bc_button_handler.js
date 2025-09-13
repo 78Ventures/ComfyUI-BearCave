@@ -4,54 +4,54 @@
 
 import { app } from "../../scripts/app.js";
 
-console.log("🐻 Bear Cave: Loading folder browser with FileBrowserAPI...");
+console.log("🐢 Tortu: Loading folder browser with FileBrowserAPI...");
 
 app.registerExtension({
-    name: "BearCave.FolderBrowser",
+    name: "Tortu.FolderBrowser",
     
     async beforeRegisterNodeDef(nodeType, nodeData) {
         if (nodeData.name === "BC_LORA_DEFINE") {
-            console.log("🐻 Bear Cave: Setting up folder browser for BC_LORA_DEFINE");
+            console.log("🐢 Tortu: Setting up folder browser for BC_LORA_DEFINE");
             
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function() {
                 const result = onNodeCreated?.apply(this, arguments);
                 
-                console.log("🐻 Bear Cave: BC_LORA_DEFINE node created, widgets:", this.widgets?.map(w => w.name));
+                console.log("🐢 Tortu: BC_LORA_DEFINE node created, widgets:", this.widgets?.map(w => w.name));
                 
                 // Add folder browser functionality
                 setTimeout(() => {
-                    console.log("🐻 Bear Cave: Timeout executing, widgets:", this.widgets?.map(w => w.name));
+                    console.log("🐢 Tortu: Timeout executing, widgets:", this.widgets?.map(w => w.name));
                     const projectPathWidget = this.widgets?.find(w => w.name === "project_base_path");
                     if (projectPathWidget) {
-                        console.log("🐻 Bear Cave: Found project_base_path widget, adding button...");
+                        console.log("🐢 Tortu: Found project_base_path widget, adding button...");
                         
                         try {
                             // Add browse button next to the path widget
                             const button = this.addWidget("button", "📁 Browse Folder", null, () => {
-                                console.log("🐻 Bear Cave: Browse button clicked!");
+                                console.log("🐢 Tortu: Browse button clicked!");
                                 
                                 if (app.FileFolderAPI) {
-                                    console.log("🐻 Bear Cave: Using FileFolderAPI");
+                                    console.log("🐢 Tortu: Using FileFolderAPI");
                                     app.FileFolderAPI.open(projectPathWidget, 'folder');
                                 } else {
-                                    console.warn("🐻 Bear Cave: FileFolderAPI not available, falling back to manual input");
+                                    console.warn("🐢 Tortu: FileFolderAPI not available, falling back to manual input");
                                     showManualInput(projectPathWidget);
                                 }
                             });
                             
-                            console.log("🐻 Bear Cave: Browse button added successfully:", button);
+                            console.log("🐢 Tortu: Browse button added successfully:", button);
                             
                             // Force a redraw
                             this.setDirtyCanvas(true, true);
                             
                         } catch (error) {
-                            console.error("🐻 Bear Cave: Error adding button:", error);
+                            console.error("🐢 Tortu: Error adding button:", error);
                         }
                         
                     } else {
-                        console.error("🐻 Bear Cave: project_base_path widget not found!");
-                        console.error("🐻 Bear Cave: Available widgets:", this.widgets?.map(w => w.name));
+                        console.error("🐢 Tortu: project_base_path widget not found!");
+                        console.error("🐢 Tortu: Available widgets:", this.widgets?.map(w => w.name));
                     }
                 }, 200);
                 
@@ -62,14 +62,14 @@ app.registerExtension({
             const onDblClick = nodeType.prototype.onDblClick;
             nodeType.prototype.onDblClick = function() {
                 onDblClick?.apply(this, arguments);
-                console.log("🐻 Bear Cave: Node double-clicked");
+                console.log("🐢 Tortu: Node double-clicked");
                 
                 const projectPathWidget = this.widgets?.find(w => w.name === "project_base_path");
                 if (app.FileFolderAPI && projectPathWidget) {
-                    console.log("🐻 Bear Cave: Opening folder browser via double-click");
+                    console.log("🐢 Tortu: Opening folder browser via double-click");
                     app.FileFolderAPI.open(projectPathWidget, 'folder');
                 } else if (projectPathWidget) {
-                    console.warn("🐻 Bear Cave: FileFolderAPI not available, using manual input");
+                    console.warn("🐢 Tortu: FileFolderAPI not available, using manual input");
                     showManualInput(projectPathWidget);
                 }
             };
@@ -84,7 +84,7 @@ app.registerExtension({
                     menuOptions.unshift({
                         content: "📁 Browse Project Folder",
                         callback: () => {
-                            console.log("🐻 Bear Cave: Menu browse option selected");
+                            console.log("🐢 Tortu: Menu browse option selected");
                             if (app.FileFolderAPI) {
                                 app.FileFolderAPI.open(projectPathWidget, 'folder');
                             } else {
@@ -117,8 +117,8 @@ Current value: ${currentValue}`;
     const newPath = prompt(helpText, currentValue);
     if (newPath !== null && newPath.trim() !== '') {
         widget.value = newPath.trim();
-        console.log("🐻 Bear Cave: Manual path entered:", widget.value);
+        console.log("🐢 Tortu: Manual path entered:", widget.value);
     }
 }
 
-console.log("🐻 Bear Cave: Double-click folder browser extension loaded");
+console.log("🐢 Tortu: Double-click folder browser extension loaded");

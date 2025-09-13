@@ -332,7 +332,7 @@ class LoRaMetadataSchema:
                 json.dump(metadata, f, indent=2, ensure_ascii=False)
             return True
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Failed to save metadata to {filepath}: {e}")
+            print(f"🐢 TORTU LoRa: Failed to save metadata to {filepath}: {e}")
             return False
     
     @classmethod
@@ -342,7 +342,7 @@ class LoRaMetadataSchema:
             with open(filepath, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
-            print(f"🐻 Bear Cave LoRa: Failed to load metadata from {filepath}: {e}")
+            print(f"🐢 TORTU LoRa: Failed to load metadata from {filepath}: {e}")
             return None
     
     @classmethod
