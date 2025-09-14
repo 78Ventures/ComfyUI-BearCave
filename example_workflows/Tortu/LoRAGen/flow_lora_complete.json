@@ -850,7 +850,7 @@
     },
     {
       "id": 11,
-      "type": "BC_EXIF_WRITER",
+      "type": "TORTU_WRITE_EXIF",
       "pos": [
         1510,
         70
@@ -979,7 +979,7 @@
       "properties": {
         "aux_id": "78Ventures/ComfyUI-BearCave",
         "ver": "16189c286c42ff70429526ec7f2b2024120badc9",
-        "Node name for S&R": "BC_EXIF_WRITER"
+        "Node name for S&R": "TORTU_WRITE_EXIF"
       },
       "widgets_values": [
         "neutral",

@@ -1248,7 +1248,7 @@
         "Node name for S&R": "ConditioningSetArea"
       },
       "widgets_values": [
-        384,
+        512,
         1648,
         0,
         0,
@@ -1296,9 +1296,9 @@
         "Node name for S&R": "ConditioningSetArea"
       },
       "widgets_values": [
-        640,
+        512,
         1648,
-        384,
+        512,
         0,
         1
       ],

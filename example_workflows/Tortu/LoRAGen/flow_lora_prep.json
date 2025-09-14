@@ -90,7 +90,7 @@
     },
     {
       "id": 4,
-      "type": "BC_EXIF_WRITER",
+      "type": "TORTU_WRITE_EXIF",
       "pos": [1120, 80],
       "size": {"0": 315, "1": 334},
       "flags": {},
@@ -111,7 +111,7 @@
         {"name": "file_size", "type": "INT", "links": null, "shape": 3},
         {"name": "save_timestamp", "type": "STRING", "links": null, "shape": 3}
       ],
-      "properties": {"Node name for S&R": "BC_EXIF_WRITER"},
+      "properties": {"Node name for S&R": "TORTU_WRITE_EXIF"},
       "widgets_values": [
         "neutral", 
         "center", 
