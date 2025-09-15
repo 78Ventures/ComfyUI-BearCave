@@ -96,7 +96,7 @@
       },
       "widgets_values": [
         1024,
-        1648,
+        1024,
         1
       ],
       "color": "#332922",
@@ -781,7 +781,7 @@
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 77
+          "link": 79
         },
         {
           "name": "negative",
@@ -1140,7 +1140,7 @@
         {
           "name": "conditioning_from",
           "type": "CONDITIONING",
-          "link": 66
+          "link": 57
         }
       ],
       "outputs": [
@@ -1153,7 +1153,7 @@
           ]
         }
       ],
-      "title": "CONCAT: BASE+DWARF",
+      "title": "CONCAT: DWARF+SCENE",
       "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.3.59",
@@ -1181,12 +1181,12 @@
         {
           "name": "conditioning_to",
           "type": "CONDITIONING",
-          "link": 81
+          "link": 66
         },
         {
           "name": "conditioning_from",
           "type": "CONDITIONING",
-          "link": 64
+          "link": 77
         }
       ],
       "outputs": [
@@ -1195,12 +1195,11 @@
           "type": "CONDITIONING",
           "slot_index": 0,
           "links": [
-            65,
             79
           ]
         }
       ],
-      "title": "CONCAT: S1 + GIRALLON",
+      "title": "CONCAT: BASE + Regional Subjects",
       "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.3.59",
@@ -1228,7 +1227,7 @@
         {
           "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 80
+          "link": 60
         }
       ],
       "outputs": [
@@ -1249,7 +1248,7 @@
       },
       "widgets_values": [
         512,
-        1648,
+        1024,
         0,
         0,
         1
@@ -1284,8 +1283,7 @@
           "type": "CONDITIONING",
           "slot_index": 0,
           "links": [
-            69,
-            81
+            69
           ]
         }
       ],
@@ -1297,7 +1295,7 @@
       },
       "widgets_values": [
         512,
-        1648,
+        1024,
         512,
         0,
         1
@@ -1629,8 +1627,8 @@
       66,
       33,
       0,
-      34,
-      1,
+      35,
+      0,
       "CONDITIONING"
     ],
     [
@@ -1645,15 +1643,23 @@
       77,
       38,
       0,
-      26,
-      0,
+      35,
+      1,
       "CONDITIONING"
     ],
     [
       79,
       35,
       0,
-      27,
+      26,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      60,
+      4,
+      0,
+      34,
       0,
       "CONDITIONING"
     ],
@@ -1662,14 +1668,6 @@
       34,
       0,
       36,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      81,
-      37,
-      0,
-      35,
       0,
       "CONDITIONING"
     ]
