@@ -61,6 +61,26 @@ def install_missing_dependencies() -> bool:
         print("Some dependencies failed to install. You may need to install them manually.")
     return ok
 
+# Show help before any heavy imports
+if __name__ == "__main__" and ("--help" in sys.argv or "-h" in sys.argv):
+    print("LoRA Conform v3 - Image Processing for LoRA Training")
+    print("\nUsage: python LoRA_Conform_v3_DEV.py [options]")
+    print("\nProcessing flags:")
+    print("  --face              Enable face detection for face-centered cropping")
+    print("  --expressions       Enable face detection + expression analysis (creates emotion folders)")
+    print("  --pfn               Preserve original filename")
+    print("  --no-text-removal   Disable text removal (default: enabled)")
+    print("  --keep-bg           Keep background (default: remove background)")
+    print("  --smart-pad         Use edge-aware padding instead of black fill")
+    print("  --no-sidecar        Disable Kohya .txt caption files (default: enabled)")
+    print("  --sidecar-overwrite Overwrite existing caption files")
+    print("  --caption \"text\"     Set custom caption text")
+    print("\nUtility flags:")
+    print("  --install           Install missing dependencies and exit")
+    print("  --diagnose          Show system diagnostics and exit")
+    print("  --help, -h          Show this help message")
+    sys.exit(0)
+
 # Defer heavy imports until after optional --install handling
 if __name__ == "__main__" and "--install" in sys.argv:
     success = install_missing_dependencies()
@@ -153,6 +173,24 @@ def write_exif(image_path, subject, expression):
     except Exception as e:
         print(f"[EXIF ERROR] {image_path}: {e}")
 
+def detect_face_for_cropping(image_path):
+    """Detect face for cropping purposes using DeepFace."""
+    try:
+        result = DeepFace.analyze(img_path=image_path, actions=['emotion'], enforce_detection=True)
+        # Get face region if detected
+        if 'region' in result[0]:
+            region = result[0]['region']
+            return {
+                'x': region['x'],
+                'y': region['y'], 
+                'w': region['w'],
+                'h': region['h']
+            }
+        return None
+    except Exception as e:
+        print(f"[FACE DETECTION ERROR] {image_path}: {e}")
+        return None
+
 def detect_expression(image_path, min_confidence=0.30, min_margin=0.15, skip_detection=False):
     if skip_detection:
         return "neutral", True
@@ -179,9 +217,23 @@ def detect_expression(image_path, min_confidence=0.30, min_margin=0.15, skip_det
         print(f"[EMOTION ERROR] {image_path}: {e}")
         return "unknown", False
 
-def convert_to_jpeg(src_path, dst_path, remove_text=True, remove_bg=False, smart_pad=False):
+def convert_to_jpeg(src_path, dst_path, remove_text=True, remove_bg=False, smart_pad=False, face_region=None):
     try:
         img = Image.open(src_path).convert("RGB")
+        
+        # Crop to face region if provided
+        if face_region:
+            print("  👤 Cropping to face region...")
+            x, y, w, h = face_region['x'], face_region['y'], face_region['w'], face_region['h']
+            # Add some padding around the face (20% on each side)
+            padding = 0.2
+            pad_x = int(w * padding)
+            pad_y = int(h * padding)
+            crop_x = max(0, x - pad_x)
+            crop_y = max(0, y - pad_y)
+            crop_w = min(img.width - crop_x, w + 2 * pad_x)
+            crop_h = min(img.height - crop_y, h + 2 * pad_y)
+            img = img.crop((crop_x, crop_y, crop_x + crop_w, crop_y + crop_h))
         
         # Remove text if enabled
         if remove_text:
@@ -320,8 +372,9 @@ def hash_image(image_path):
         return None
 
 def main():
-    # Default to no face detection, enable with --face flag
+    # Parse face and expression flags
     enable_face_detection = "--face" in sys.argv
+    enable_expressions = "--expressions" in sys.argv
     preserve_filename = "--pfn" in sys.argv
     remove_text = "--no-text-removal" not in sys.argv  # Default: remove text
     remove_bg = "--keep-bg" not in sys.argv  # Default: remove background, --keep-bg to preserve
@@ -336,10 +389,18 @@ def main():
             custom_caption = sys.argv[i + 1]
             break
     
-    if enable_face_detection:
+    if enable_expressions:
         print("=== LoRA Expression Tagger with Emotion Folders + NOTE Placeholder ===")
+        print("👤 Face detection: ENABLED (for expression analysis)")
+        print("😊 Expression analysis: ENABLED (creates emotion subfolders)")
+    elif enable_face_detection:
+        print("=== LoRA Face-Centered Cropping Tagger ===")
+        print("👤 Face detection: ENABLED (for cropping only)")
+        print("😊 Expression analysis: DISABLED")
     else:
         print("=== LoRA Conform Tagger (No Face Detection) ===")
+        print("👤 Face detection: DISABLED")
+        print("😊 Expression analysis: DISABLED")
     
     if remove_text:
         print("📝 Text removal: ENABLED")
@@ -368,7 +429,7 @@ def main():
     source_folder = os.path.join(base_dir, project_name, "00_SOURCE")
     conform_root = os.path.join(base_dir, project_name, "01_CONFORM")
     
-    if enable_face_detection:
+    if enable_expressions:
         expressions_root = os.path.join(conform_root, "expressions")
         review_folder = os.path.join(expressions_root, "_REVIEW")
     else:
@@ -402,8 +463,18 @@ def main():
             continue
         seen_hashes.add(img_hash)
 
-        # Detect expression
-        expression, is_confident = detect_expression(full_path, skip_detection=not enable_face_detection)
+        # Handle face detection for cropping
+        face_region = None
+        if enable_face_detection:
+            face_region = detect_face_for_cropping(full_path)
+            if not face_region:
+                print("⚠️ No face detected for cropping, using full image")
+        
+        # Detect expression if expressions enabled
+        if enable_expressions:
+            expression, is_confident = detect_expression(full_path, skip_detection=False)
+        else:
+            expression, is_confident = "neutral", True
         
         # Generate filename
         if preserve_filename:
@@ -413,14 +484,14 @@ def main():
             filename_out = f"{subject_label}_{counter:03}_{expression}_POSE_NOTE.jpg"
 
         # Choose output folder
-        if enable_face_detection:
+        if enable_expressions:
             if not is_confident:
                 out_folder = review_folder
             else:
                 out_folder = os.path.join(expressions_root, expression)
                 os.makedirs(out_folder, exist_ok=True)
         else:
-            # No face detection - everything goes to conform root
+            # No expressions - everything goes to conform root
             out_folder = expressions_root
 
         output_path = os.path.join(out_folder, filename_out)
@@ -430,13 +501,13 @@ def main():
             sidecar_update(output_path, overwrite=sidecar_overwrite, caption=custom_caption)
 
         # Convert and save
-        convert_to_jpeg(full_path, output_path, remove_text=remove_text, remove_bg=remove_bg, smart_pad=smart_pad)
+        convert_to_jpeg(full_path, output_path, remove_text=remove_text, remove_bg=remove_bg, smart_pad=smart_pad, face_region=face_region)
         write_exif(output_path, subject_label, expression)
 
         print(f"✅ Saved as: {filename_out} → {out_folder}")
         counter += 1
 
-    if enable_face_detection:
+    if enable_expressions:
         print(f"\n🏁 Done!\nMain output: {expressions_root}\nReview folder: {review_folder}")
     else:
         print(f"\n🏁 Done!\nOutput folder: {expressions_root}")
