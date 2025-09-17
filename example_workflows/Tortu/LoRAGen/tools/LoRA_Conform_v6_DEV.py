@@ -63,8 +63,8 @@ def install_missing_dependencies() -> bool:
 
 # Show help before any heavy imports
 if __name__ == "__main__" and ("--help" in sys.argv or "-h" in sys.argv):
-    print("LoRA Conform v4 - Image Processing for LoRA Training")
-    print("\nUsage: python LoRA_Conform_v4_DEV.py [options]")
+    print("LoRA Conform v5 - Image Processing for LoRA Training")
+    print("\nUsage: python LoRA_Conform_v5_DEV.py [options]")
     print("\nProcessing flags:")
     print("  --face              Enable face detection for face-centered cropping")
     print("  --exp, --expressions Enable face detection + expression analysis (creates expressions folders)")
@@ -121,6 +121,7 @@ try:
     from rembg import remove
     from skimage import segmentation, color
     import json
+    import shutil
     from pathlib import Path
 except ImportError as e:
     print(f"Missing dependency: {e}")
@@ -174,22 +175,117 @@ def write_exif(image_path, subject, expression):
         print(f"[EXIF ERROR] {image_path}: {e}")
 
 def detect_face_for_cropping(image_path):
-    """Detect face for cropping purposes using DeepFace."""
+    """Detect face for cropping purposes using DeepFace with multiple backends."""
+    # Try multiple detection backends in order of preference
+    backends = ['opencv', 'ssd', 'mtcnn', 'retinaface']
+    
+    for backend in backends:
+        try:
+            print(f"🔍 Trying face detection with {backend} backend...")
+            # Use enforce_detection=False to be more lenient
+            result = DeepFace.analyze(
+                img_path=image_path, 
+                actions=['emotion'], 
+                enforce_detection=False,
+                detector_backend=backend
+            )
+            
+            # Get face region if detected and validate it's reasonable
+            if result and len(result) > 0 and 'region' in result[0]:
+                region = result[0]['region']
+                
+                # Enhanced validation - ensure face region is reasonable
+                img = Image.open(image_path)
+                img_area = img.width * img.height
+                face_area = region['w'] * region['h']
+                face_ratio = face_area / img_area
+                
+                # Calculate aspect ratio of detected face region
+                face_aspect_ratio = region['w'] / region['h']
+                
+                # Validation criteria:
+                # 1. Face should be 5% to 80% of image area (tightened from 2%)
+                # 2. Aspect ratio should be reasonable (0.5 to 2.0) - not extremely narrow/wide
+                # 3. Minimum pixel dimensions - at least 100x100 pixels
+                min_area_ratio = 0.05
+                max_area_ratio = 0.8
+                min_aspect_ratio = 0.5
+                max_aspect_ratio = 2.0
+                min_pixels = 100
+                
+                valid_area = min_area_ratio <= face_ratio <= max_area_ratio
+                valid_aspect = min_aspect_ratio <= face_aspect_ratio <= max_aspect_ratio
+                valid_size = region['w'] >= min_pixels and region['h'] >= min_pixels
+                
+                print(f"✓ {backend}: {region['w']}x{region['h']} ({face_ratio:.1%} area, {face_aspect_ratio:.2f} ratio)")
+                
+                if valid_area and valid_aspect and valid_size:
+                    print(f"✅ Valid face region found with {backend} backend")
+                    return {
+                        'x': region['x'],
+                        'y': region['y'], 
+                        'w': region['w'],
+                        'h': region['h']
+                    }
+                else:
+                    reasons = []
+                    if not valid_area: reasons.append(f"area {face_ratio:.1%}")
+                    if not valid_aspect: reasons.append(f"aspect {face_aspect_ratio:.2f}")
+                    if not valid_size: reasons.append(f"size {region['w']}x{region['h']}")
+                    print(f"❌ {backend}: Invalid face region ({', '.join(reasons)})")
+                    # Continue to next backend
+            else:
+                print(f"❌ {backend}: No face region detected")
+                
+        except Exception as e:
+            print(f"❌ {backend}: Detection failed - {e}")
+            # Continue to next backend
+    
+    # All backends failed
+    print("⚠️ All face detection backends failed, using center crop")
+    return None
+
+def get_center_crop_region(image_path):
+    """Generate a center crop region for square aspect ratio."""
     try:
-        result = DeepFace.analyze(img_path=image_path, actions=['emotion'], enforce_detection=True)
-        # Get face region if detected
-        if 'region' in result[0]:
-            region = result[0]['region']
-            return {
-                'x': region['x'],
-                'y': region['y'], 
-                'w': region['w'],
-                'h': region['h']
-            }
-        return None
+        img = Image.open(image_path)
+        width, height = img.size
+        
+        # Create square crop from center
+        min_side = min(width, height)
+        
+        # Center the crop
+        left = (width - min_side) // 2
+        top = (height - min_side) // 2
+        
+        return {
+            'x': left,
+            'y': top,
+            'w': min_side,
+            'h': min_side
+        }
     except Exception as e:
-        print(f"[FACE DETECTION ERROR] {image_path}: {e}")
+        print(f"[CENTER CROP ERROR] {image_path}: {e}")
         return None
+
+def copy_failure_files(source_path, output_path, fail_folder, filename_base):
+    """Copy source and output files to failure directory for troubleshooting."""
+    try:
+        source_filename = os.path.basename(source_path)
+        output_filename = os.path.basename(output_path)
+        
+        # Copy source file preserving original filename (ends with _S)
+        fail_source_path = os.path.join(fail_folder, source_filename)
+        shutil.copy2(source_path, fail_source_path)
+        
+        # Copy output file preserving original filename (ends with _C)
+        fail_output_path = os.path.join(fail_folder, output_filename)
+        shutil.copy2(output_path, fail_output_path)
+        
+        print(f"📁 Copied failure files to 00_FAIL: {source_filename}, {output_filename}")
+        
+    except Exception as e:
+        print(f"[FAILURE COPY ERROR]: {e}")
 
 def detect_expression(image_path, min_confidence=0.30, min_margin=0.15, skip_detection=False):
     if skip_detection:
@@ -440,7 +536,11 @@ def main():
         print(f"❌ Source folder not found: {source_folder}")
         return
 
+    # Create failure directory for troubleshooting
+    fail_folder = os.path.join(conform_root, "00_FAIL")
+    
     os.makedirs(expressions_root, exist_ok=True)
+    os.makedirs(fail_folder, exist_ok=True)
     if review_folder:
         os.makedirs(review_folder, exist_ok=True)
 
@@ -465,10 +565,13 @@ def main():
 
         # Handle face detection for cropping
         face_region = None
+        face_detection_failed = False
         if enable_face_detection:
             face_region = detect_face_for_cropping(full_path)
             if not face_region:
-                print("⚠️ No face detected for cropping, using full image")
+                print("⚠️ No face detected for cropping, using center crop")
+                face_region = get_center_crop_region(full_path)
+                face_detection_failed = True
         
         # Detect expression if expressions enabled
         if enable_expressions:
@@ -481,7 +584,7 @@ def main():
             base_name = os.path.splitext(filename)[0]
             filename_out = f"{base_name}_C.jpg"
         else:
-            filename_out = f"{subject_label}_{counter:03d}.jpg"
+            filename_out = f"{subject_label}_{counter:03d}_C.jpg"
 
         # Choose output folder
         if enable_expressions:
@@ -503,6 +606,10 @@ def main():
         # Convert and save
         convert_to_jpeg(full_path, output_path, remove_text=remove_text, remove_bg=remove_bg, smart_pad=smart_pad, face_region=face_region)
         write_exif(output_path, subject_label, expression)
+
+        # Copy to failure directory if face detection failed
+        if face_detection_failed:
+            copy_failure_files(full_path, output_path, fail_folder, filename_out)
 
         print(f"✅ Saved as: {filename_out} → {out_folder}")
         counter += 1
