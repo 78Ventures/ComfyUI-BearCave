@@ -1,0 +1,1199 @@
+{
+  "id": "3d165806-f3f7-4d40-8b4a-b7a42027eed7",
+  "revision": 2,
+  "last_node_id": 80,
+  "last_link_id": 120,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [-2400, -1200],
+      "size": [315, 98],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [1, 2, 3]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 1,
+          "links": [4, 5, 6, 7, 8]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 2,
+          "links": [9, 10, 11, 12, 13, 14]
+        }
+      ],
+      "title": "LOAD MODEL (Checkpoint)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": ["sd_xl_base_1.0.safetensors"],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 2,
+      "type": "EmptyLatentImage",
+      "pos": [-2400, -1050],
+      "size": [315, 130],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [15]
+        }
+      ],
+      "title": "SET IMAGE SIZE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [1024, 1024, 1],
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
+      "id": 10,
+      "type": "CLIPTextEncode",
+      "pos": [-2000, -1200],
+      "size": [520, 150],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [20]
+        }
+      ],
+      "title": "PROMPT: HOUSE STYLE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "traditional-style fantasy illustration, realistic painterly aesthetic, strong readable silhouettes, bold dramatic lighting, hand-painted textures, layered brush strokes, atmospheric depth, storybook quality, dynamic cinematic composition, rich but muted colors, warm shadows, minimal linework or blended edges, print-ready finish"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 11,
+      "type": "CLIPTextEncode",
+      "pos": [-2000, -1000],
+      "size": [520, 150],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [21]
+        }
+      ],
+      "title": "PROMPT: SCENE DESCRIPTION",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "(broken stone road through jungle clearing:1.25), vines, mossy stones, tall jungle trees, (dappled sunlight shafts:1.25), ancient atmosphere, mystical jungle setting"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 12,
+      "type": "ConditioningConcat",
+      "pos": [-1400, -1100],
+      "size": [300, 70],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_to",
+          "type": "CONDITIONING",
+          "link": 20
+        },
+        {
+          "name": "conditioning_from",
+          "type": "CONDITIONING",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [22]
+        }
+      ],
+      "title": "PASS 1: BACKGROUND SCENE ONLY",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ConditioningConcat"
+      },
+      "widgets_values": [],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 15,
+      "type": "CLIPTextEncode",
+      "pos": [-2000, -800],
+      "size": [520, 150],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [25, 72]
+        }
+      ],
+      "title": "PROMPT: NEGATIVE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "(bad anatomy:1.4), (extra limbs:1.6), fused arms, duplicate limbs, poor proportions, blurry, soft focus, indistinct shapes, occluded faces, bad perspective, messy silhouette, ambient glow, bloom, neon, overexposed, radioactive haze, comic style, cartoon, 3d render, toy, cg artifact, sketch overlay, grayscale, blood, gore, dismemberment, open wounds, body horror, watermark, text, frame border, glitch"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 20,
+      "type": "KSampler",
+      "pos": [-1000, -1100],
+      "size": [315, 262],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 22
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 25
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [30]
+        }
+      ],
+      "title": "PASS 1: BACKGROUND GENERATION",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [720483431525882, "randomize", 25, 7.5, "dpmpp_2m_sde", "karras", 1.0],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 21,
+      "type": "VAEDecode",
+      "pos": [-600, -1100],
+      "size": [220, 80],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 30
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [31, 32]
+        }
+      ],
+      "title": "DECODE: Background",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 30,
+      "type": "CLIPTextEncode",
+      "pos": [-2000, -600],
+      "size": [520, 200],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [40]
+        }
+      ],
+      "title": "PROMPT: SUBJECT 2 (Monster)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "(girallon:1.8), massive albino four-armed ape, enraged, (primary arms raised to strike:1.4), (two smaller secondary arms limp:1.2), green ooze, long tail whipping, powerful torso, (highly visible:1.3), (prominent in scene:1.2), in jungle setting"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 31,
+      "type": "LoadImage",
+      "pos": [-2400, -600],
+      "size": [320, 314],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [41]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "title": "POSE: Subject 2",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["Pose_Girallon_Line.png", true],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 32,
+      "type": "OpenposePreprocessor",
+      "pos": [-2000, -350],
+      "size": [320, 220],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 41
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [42]
+        },
+        {
+          "name": "POSE_KEYPOINT",
+          "type": "POSE_KEYPOINT",
+          "links": null
+        }
+      ],
+      "title": "OpenPose: Subject 2",
+      "properties": {
+        "cnr_id": "comfyui_controlnet_aux",
+        "ver": "cc6b232f4a47f0cdf70f4e1bfa24b74bd0d75bf1",
+        "Node name for S&R": "OpenposePreprocessor"
+      },
+      "widgets_values": ["enable", "enable", "enable", 896, "disable"],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 33,
+      "type": "ControlNetLoader",
+      "pos": [-1600, -350],
+      "size": [320, 80],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CONTROL_NET",
+          "type": "CONTROL_NET",
+          "slot_index": 0,
+          "links": [43]
+        }
+      ],
+      "title": "CN OpenPose - Subject 2",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ControlNetLoader"
+      },
+      "widgets_values": ["thibaud_xl_openpose.safetensors"],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 34,
+      "type": "ControlNetApplyAdvanced",
+      "pos": [-1200, -600],
+      "size": [320, 280],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 40
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 25
+        },
+        {
+          "name": "control_net",
+          "type": "CONTROL_NET",
+          "link": 43
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 42
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [44]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "slot_index": 1,
+          "links": [45]
+        }
+      ],
+      "title": "PASS 2: APPLY SUBJECT 2 POSE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ControlNetApplyAdvanced"
+      },
+      "widgets_values": [1.2, 0, 0.9],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 35,
+      "type": "VAEEncode",
+      "pos": [-600, -950],
+      "size": [220, 80],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 31
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [46]
+        }
+      ],
+      "title": "ENCODE: Background for Inpaint",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": [],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 36,
+      "type": "CreateRectMask",
+      "pos": [-600, -800],
+      "size": [220, 130],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "slot_index": 0,
+          "links": [47, 57]
+        }
+      ],
+      "title": "MASK: Subject 2 Area (Right)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CreateRectMask"
+      },
+      "widgets_values": [1024, 1024, 512, 0, 512, 1024],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 37,
+      "type": "SetLatentNoiseMask",
+      "pos": [-800, -600],
+      "size": [220, 80],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 46
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 47
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [48]
+        }
+      ],
+      "title": "MASK: Apply Subject 2 Inpaint",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SetLatentNoiseMask"
+      },
+      "widgets_values": [],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 40,
+      "type": "KSampler",
+      "pos": [-1000, -400],
+      "size": [315, 262],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 2
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 44
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 45
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 48
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [50]
+        }
+      ],
+      "title": "PASS 2: SUBJECT 2 GENERATION",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [720483431525882, "randomize", 20, 7.0, "dpmpp_2m_sde", "karras", 0.75],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 41,
+      "type": "VAEDecode",
+      "pos": [-600, -400],
+      "size": [220, 80],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 50
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [51, 52]
+        }
+      ],
+      "title": "DECODE: Subject 2 Layer",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 50,
+      "type": "CLIPTextEncode",
+      "pos": [-2000, -200],
+      "size": [520, 200],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [60]
+        }
+      ],
+      "title": "PROMPT: SUBJECT 1 (Dwarf)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "(foreground dwarf barbarian:1.4), leaping midair, axe raised in both hands, knees tucked, twisting upward, aged copper armor with green verdigris, full helmet, (streaming red beard:1.25), rugged furs and leather, stocky powerful build, (heroic pose:1.2)"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 51,
+      "type": "LoadImage",
+      "pos": [-2400, -200],
+      "size": [320, 314],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [61]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "title": "POSE: Subject 1",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["Pose_Dwarf_Line.png", true],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 52,
+      "type": "OpenposePreprocessor",
+      "pos": [-2000, 50],
+      "size": [320, 220],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 61
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [62]
+        },
+        {
+          "name": "POSE_KEYPOINT",
+          "type": "POSE_KEYPOINT",
+          "links": null
+        }
+      ],
+      "title": "OpenPose: Subject 1",
+      "properties": {
+        "cnr_id": "comfyui_controlnet_aux",
+        "ver": "cc6b232f4a47f0cdf70f4e1bfa24b74bd0d75bf1",
+        "Node name for S&R": "OpenposePreprocessor"
+      },
+      "widgets_values": ["enable", "enable", "enable", 896, "disable"],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 53,
+      "type": "ControlNetLoader",
+      "pos": [-1600, 50],
+      "size": [320, 80],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CONTROL_NET",
+          "type": "CONTROL_NET",
+          "slot_index": 0,
+          "links": [63]
+        }
+      ],
+      "title": "CN OpenPose - Subject 1",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ControlNetLoader"
+      },
+      "widgets_values": ["thibaud_xl_openpose.safetensors"],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 54,
+      "type": "ControlNetApplyAdvanced",
+      "pos": [-1200, -200],
+      "size": [320, 280],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 60
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 72
+        },
+        {
+          "name": "control_net",
+          "type": "CONTROL_NET",
+          "link": 63
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 62
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [64]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "slot_index": 1,
+          "links": [65]
+        }
+      ],
+      "title": "PASS 3: APPLY SUBJECT 1 POSE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ControlNetApplyAdvanced"
+      },
+      "widgets_values": [1.1, 0, 0.85],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 55,
+      "type": "VAEEncode",
+      "pos": [-600, -250],
+      "size": [220, 80],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 51
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [66]
+        }
+      ],
+      "title": "ENCODE: Subject 2 Layer for Inpaint",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": [],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 56,
+      "type": "CreateRectMask",
+      "pos": [-600, -100],
+      "size": [220, 130],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "slot_index": 0,
+          "links": [67]
+        }
+      ],
+      "title": "MASK: Subject 1 Area (Left)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CreateRectMask"
+      },
+      "widgets_values": [1024, 1024, 0, 0, 512, 1024],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 57,
+      "type": "SetLatentNoiseMask",
+      "pos": [-800, -200],
+      "size": [220, 80],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 66
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 67
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [68]
+        }
+      ],
+      "title": "MASK: Apply Subject 1 Inpaint",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SetLatentNoiseMask"
+      },
+      "widgets_values": [],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 60,
+      "type": "KSampler",
+      "pos": [-1000, 0],
+      "size": [315, 262],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 3
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 64
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 65
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 68
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [70]
+        }
+      ],
+      "title": "PASS 3: SUBJECT 1 GENERATION",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [720483431525882, "randomize", 20, 7.0, "dpmpp_2m_sde", "karras", 0.6],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 61,
+      "type": "VAEDecode",
+      "pos": [-600, 0],
+      "size": [220, 80],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 70
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [71]
+        }
+      ],
+      "title": "DECODE: Final Layered Image",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 70,
+      "type": "SaveImage",
+      "pos": [-200, -600],
+      "size": [600, 750],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 32
+        }
+      ],
+      "outputs": [],
+      "title": "SAVE: Pass 1 Background",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["Pass1_Background"],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 71,
+      "type": "SaveImage",
+      "pos": [-200, 200],
+      "size": [600, 750],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 52
+        }
+      ],
+      "outputs": [],
+      "title": "SAVE: Pass 2 Subject 2",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["Pass2_Subject2"],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 72,
+      "type": "SaveImage",
+      "pos": [500, 0],
+      "size": [600, 750],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 71
+        }
+      ],
+      "outputs": [],
+      "title": "SAVE: Final Layered Result",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": ["SceneSetter_v13_LAYERED"],
+      "color": "#222",
+      "bgcolor": "#000"
+    }
+  ],
+  "links": [
+    [1, 1, 0, 20, 0, "MODEL"],
+    [2, 1, 0, 40, 0, "MODEL"],
+    [3, 1, 0, 60, 0, "MODEL"],
+    [4, 1, 1, 10, 0, "CLIP"],
+    [5, 1, 1, 11, 0, "CLIP"],
+    [6, 1, 1, 15, 0, "CLIP"],
+    [7, 1, 1, 30, 0, "CLIP"],
+    [8, 1, 1, 50, 0, "CLIP"],
+    [9, 1, 2, 21, 1, "VAE"],
+    [10, 1, 2, 34, 4, "VAE"],
+    [11, 1, 2, 35, 1, "VAE"],
+    [12, 1, 2, 41, 1, "VAE"],
+    [13, 1, 2, 54, 4, "VAE"],
+    [14, 1, 2, 55, 1, "VAE"],
+    [15, 2, 0, 20, 3, "LATENT"],
+    [20, 10, 0, 12, 0, "CONDITIONING"],
+    [21, 11, 0, 12, 1, "CONDITIONING"],
+    [22, 12, 0, 20, 1, "CONDITIONING"],
+    [25, 15, 0, 20, 2, "CONDITIONING"],
+    [30, 20, 0, 21, 0, "LATENT"],
+    [31, 21, 0, 35, 0, "IMAGE"],
+    [32, 21, 0, 70, 0, "IMAGE"],
+    [40, 30, 0, 34, 0, "CONDITIONING"],
+    [41, 31, 0, 32, 0, "IMAGE"],
+    [42, 32, 0, 34, 3, "IMAGE"],
+    [43, 33, 0, 34, 2, "CONTROL_NET"],
+    [44, 34, 0, 40, 1, "CONDITIONING"],
+    [45, 34, 1, 40, 2, "CONDITIONING"],
+    [46, 35, 0, 37, 0, "LATENT"],
+    [47, 36, 0, 37, 1, "MASK"],
+    [48, 37, 0, 40, 3, "LATENT"],
+    [50, 40, 0, 41, 0, "LATENT"],
+    [51, 41, 0, 55, 0, "IMAGE"],
+    [52, 41, 0, 71, 0, "IMAGE"],
+    [60, 50, 0, 54, 0, "CONDITIONING"],
+    [61, 51, 0, 52, 0, "IMAGE"],
+    [62, 52, 0, 54, 3, "IMAGE"],
+    [63, 53, 0, 54, 2, "CONTROL_NET"],
+    [64, 54, 0, 60, 1, "CONDITIONING"],
+    [65, 54, 1, 60, 2, "CONDITIONING"],
+    [66, 55, 0, 57, 0, "LATENT"],
+    [67, 56, 0, 57, 1, "MASK"],
+    [68, 57, 0, 60, 3, "LATENT"],
+    [70, 60, 0, 61, 0, "LATENT"],
+    [71, 61, 0, 72, 0, "IMAGE"],
+    [72, 15, 0, 54, 1, "CONDITIONING"],
+    [15, 1, 2, 61, 1, "VAE"]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.5,
+      "offset": [2800, 1600]
+    }
+  },
+  "version": 0.4
+}
