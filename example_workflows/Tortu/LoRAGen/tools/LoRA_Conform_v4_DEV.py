@@ -63,17 +63,17 @@ def install_missing_dependencies() -> bool:
 
 # Show help before any heavy imports
 if __name__ == "__main__" and ("--help" in sys.argv or "-h" in sys.argv):
-    print("LoRA Conform v3 - Image Processing for LoRA Training")
-    print("\nUsage: python LoRA_Conform_v3_DEV.py [options]")
+    print("LoRA Conform v4 - Image Processing for LoRA Training")
+    print("\nUsage: python LoRA_Conform_v4_DEV.py [options]")
     print("\nProcessing flags:")
     print("  --face              Enable face detection for face-centered cropping")
-    print("  --expressions       Enable face detection + expression analysis (creates emotion folders)")
-    print("  --pfn               Preserve original filename")
-    print("  --no-text-removal   Disable text removal (default: enabled)")
-    print("  --keep-bg           Keep background (default: remove background)")
-    print("  --smart-pad         Use edge-aware padding instead of black fill")
-    print("  --no-sidecar        Disable Kohya .txt caption files (default: enabled)")
-    print("  --sidecar-overwrite Overwrite existing caption files")
+    print("  --exp, --expressions Enable face detection + expression analysis (creates expressions folders)")
+    print("  --fnk               Preserve original filename (default: rewrite with trigger_word+increment)")
+    print("  --text-no           Enable text removal (default: disabled)")
+    print("  --bg-remove         Remove background (default: disabled)")
+    print("  --pad               Use edge-aware padding instead of black fill (default: disabled)")
+    print("  --sidecar-no        Disable Kohya .txt caption files (default: enabled)")
+    print("  --sidecar-keep      Preserve existing sidecars (default: overwrite existing caption files)")
     print("  --caption \"text\"     Set custom caption text")
     print("\nUtility flags:")
     print("  --install           Install missing dependencies and exit")
@@ -374,13 +374,13 @@ def hash_image(image_path):
 def main():
     # Parse face and expression flags
     enable_face_detection = "--face" in sys.argv
-    enable_expressions = "--expressions" in sys.argv
-    preserve_filename = "--pfn" in sys.argv
-    remove_text = "--no-text-removal" not in sys.argv  # Default: remove text
-    remove_bg = "--keep-bg" not in sys.argv  # Default: remove background, --keep-bg to preserve
-    smart_pad = "--smart-pad" in sys.argv  # Use edge-aware padding instead of black
-    enable_sidecar = "--no-sidecar" not in sys.argv  # Default: create .txt caption files
-    sidecar_overwrite = "--sidecar-overwrite" in sys.argv  # Overwrite existing caption files
+    enable_expressions = "--expressions" in sys.argv or "--exp" in sys.argv
+    preserve_filename = "--fnk" in sys.argv
+    remove_text = "--text-no" in sys.argv  # Default: disabled, --text-no to enable
+    remove_bg = "--bg-remove" in sys.argv  # Default: disabled, --bg-remove to enable
+    smart_pad = "--pad" in sys.argv  # Default: disabled, --pad to enable edge-aware padding
+    enable_sidecar = "--sidecar-no" not in sys.argv  # Default: enabled, --sidecar-no to disable
+    sidecar_overwrite = "--sidecar-keep" not in sys.argv  # Default: overwrite, --sidecar-keep to preserve
     
     # Parse custom caption from command line
     custom_caption = None
@@ -481,7 +481,7 @@ def main():
             base_name = os.path.splitext(filename)[0]
             filename_out = f"{base_name}_C.jpg"
         else:
-            filename_out = f"{subject_label}_{counter:03}_{expression}_POSE_NOTE.jpg"
+            filename_out = f"{subject_label}_{counter:03d}.jpg"
 
         # Choose output folder
         if enable_expressions:
