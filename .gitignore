@@ -63,7 +63,7 @@ previews/
 *.tmp
 
 # Development/debugging
-dev/
+dev/bugshots
 
 # OS/metadata
 *.log
